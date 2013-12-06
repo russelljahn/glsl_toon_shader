@@ -36,6 +36,7 @@ using boost::shared_ptr;
 #include "glmatrix.hpp"
 #include "matrix_stack.hpp"
 
+
 using namespace Cg;
 
 #define OUTPUT(x) std::cout << #x " = " << x << std::endl;
@@ -303,6 +304,7 @@ void GLSLProgram::setVec1f(const char *name, float v)
     GLint loc = glGetUniformLocation(program_object, name);
     if (loc >= 0) {
         glUniform1f(loc, v);
+        
     }
 }
 
@@ -424,7 +426,7 @@ Torus::Torus(Transform t, MaterialPtr m)
 
     loadProgram();
 
-    material->bindTextures();
+    //material->bindTextures();
 }
 
 Torus::~Torus() {
@@ -456,6 +458,101 @@ void Torus::draw(const View& view, LightPtr light) {
 
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
     mesh2d->draw();
+    popGLMatrix(GL_MODELVIEW);
+}
+
+
+void ModelObject::loadProgram()
+{
+    VertexShader vs;
+    FragmentShader fs;
+    bool vs_ok = vs.readTextFile(vertex_filename.c_str());
+    bool fs_ok = fs.readTextFile(fragment_filename.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs.getShader(), fs.getShader());
+        vs.release();
+        fs.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            program.swap(new_program);
+           // glBindAttribLocation(program.program_object, 0, "parametric");
+           // glLinkProgram(program.program_object);
+           // GLint torusInfo_location = program.getLocation("torusInfo");
+           // const float outerRadius = 1.5, innerRadius = 0.5;
+            program.use();
+           // glUniform2f(torusInfo_location, outerRadius, innerRadius);
+            
+            // Assign samplers statically to texture units 0 through 3
+            program.setSampler("normalMap", 0);
+            program.setSampler("decal", 1);
+            program.setSampler("heightField", 2);
+            program.setSampler("envmap", 3);
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+}
+
+ModelObject::ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m)
+: Object(t, m)
+{
+    std::string err = tinyobj::LoadObj(shapes, filename, basepath);
+    
+    if (!err.empty()) {
+        std::cerr << err << std::endl;
+        return;
+    }
+    //obj = new cObj(filename);
+    
+    vertex_filename = "glsl/torus.vert";
+    fragment_filename = "glsl/00_red.frag";
+    
+    //mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(80,40)));
+    
+    loadProgram();
+    
+    material->bindTextures();
+}
+
+ModelObject::~ModelObject() {
+}
+
+void ModelObject::draw(const View& view, LightPtr light) {
+    program.use();
+    
+    
+    float4 eye_position_object_space = mul(transform.getInverseMatrix(), float4(view.eye_position,1));
+    eye_position_object_space.xyz /= eye_position_object_space.w;
+    program.setVec3f("eyePosition", eye_position_object_space.xyz);
+    
+    float4 light_position_object_space = mul(transform.getInverseMatrix(), light->getPosition());
+    light_position_object_space.xyz /= light_position_object_space.w;
+    program.setVec3f("lightPosition", light_position_object_space.xyz);
+    
+    // LM = Light color modulated by Matrial color
+    // a,d,s = ambient, diffuse, specular
+    
+    float4 LMa = material->ambient*light->getColor();
+    program.setVec4f("LMa", LMa);
+    float4 LMd = material->diffuse*light->getColor();
+    program.setVec4f("LMd", LMd);
+    float4 LMs = material->specular*light->getColor();
+    program.setVec4f("LMs", LMs);
+    program.setVec1f("shininess", material->shininess);
+    
+    program.setMat3f("objectToWorld", transform);
+    ////ERR_CHECK();
+    
+    pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
+    //mesh2d->draw();
+    //obj->render();
     popGLMatrix(GL_MODELVIEW);
 }
 
@@ -770,6 +867,10 @@ void Scene::draw()
     for (size_t i=0; i<object_list.size(); i++) {
         object_list[i]->draw(view, light_list[0]);
     }
+    models->draw(view, light_list[0]);
+    /*for (size_t i=0; i<model_list.size(); i++) {
+        model_list[i]->render();
+    }*/
     for (size_t i=0; i<light_list.size(); i++) {
         LightPtr light = light_list[i];
     
@@ -779,7 +880,10 @@ void Scene::draw()
         envmap->draw(10);
     }
 }
-
+void Scene::addModel(ModelPtr object)
+{
+    models = object;
+}
 void Scene::addObject(ObjectPtr object)
 {
     object_list.push_back(object);

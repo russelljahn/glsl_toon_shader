@@ -31,6 +31,8 @@ using boost::shared_ptr;
 
 #include "texture.hpp"
 
+#include "obj.hpp"
+
 using namespace Cg;
 
 class Transform {
@@ -279,18 +281,34 @@ public:
 };
 typedef shared_ptr<Torus> TorusPtr;
 
+class ModelObject : public Object {
+private:
+    std::vector<tinyobj::shape_t> shapes;
+protected:
+    
+public:
+	ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m);
+	~ModelObject();
+    void loadProgram();
+    void draw(const View& view, LightPtr light);
+};
+typedef shared_ptr<ModelObject> ModelPtr;
+
+
 struct Scene {
     Camera camera;
     View view;
     vector<LightPtr> light_list;
     vector<ObjectPtr> object_list;
+    vector<tinyobj::shape_t> shapes;
     CubeMapPtr envmap;
-
+    ModelPtr models;
     Scene(const Camera& c, const View& v);
     void setView(const View& v);
     void setCamera(const Camera& c);
     void draw();
     void addObject(ObjectPtr object);
+    void addModel(ModelPtr object);
     void addLight(LightPtr light);
     void setEnvMap(CubeMapPtr envmap);
 };

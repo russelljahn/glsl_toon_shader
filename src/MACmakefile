@@ -18,6 +18,8 @@ SHADER_SCENE_C = \
   $(NULL)
 
 SHADER_SCENE_CPP = \
+  misc.cpp \
+  obj.cpp \
   inverse.cpp \
   normalize.cpp \
   sqrt.cpp \
@@ -29,6 +31,7 @@ SHADER_SCENE_CPP = \
   texture.cpp \
   trackball.cpp \
   stb_image.cpp \
+
   $(NULL)
 
 SHADER_SCENE_OBJS = \

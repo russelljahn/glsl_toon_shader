@@ -37,4 +37,4 @@ objs.debug/scene.o: scene.cpp ../glew/include/GL/glew.h \
   include/Cg/normalize.hpp include/Cg/distance.hpp \
   include/Cg/radians.hpp include/Cg/length.hpp include/Cg/sin.hpp \
   include/Cg/cos.hpp include/Cg/stdlib.hpp include/Cg/iostream.hpp \
-  scene.hpp glmatrix.hpp texture.hpp matrix_stack.hpp
+  scene.hpp glmatrix.hpp texture.hpp obj.hpp matrix_stack.hpp

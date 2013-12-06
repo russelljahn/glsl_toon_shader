@@ -1,79 +1,58 @@
-#ifndef OBJ_H
-#define OBJ_H
+//
+// Copyright 2012-2013, Syoyo Fujita.
+//
+// Licensed under 2-clause BSD liecense.
+//
 
-#include <vector>
-#include <iostream>
-#include <fstream>
 #include <string>
-#include <sstream>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <math.h>
-#include "misc.hpp"
-//#include "scene.hpp"
+#include <vector>
+#include <map>
 
-
-
-struct vertex {
-	std::vector<float> v;
-	void normalize() {
-		float magnitude = 0.0f;
-		for (int i = 0; i < v.size(); i++)
-			magnitude += pow(v[i], 2.0f);
-		magnitude = sqrt(magnitude);
-		for (int i = 0; i < v.size(); i++)
-			v[i] /= magnitude;
-	}
-	vertex operator-(vertex v2) {
-		vertex v3;
-		if (v.size() != v2.v.size()) {
-			v3.v.push_back(0.0f);
-			v3.v.push_back(0.0f);
-			v3.v.push_back(0.0f);
-		} else {
-			for (int i = 0; i < v.size(); i++)
-				v3.v.push_back(v[i] - v2.v[i]);
-		}
-		return v3;
-	}
-	vertex cross(vertex v2) {
-		vertex v3;
-		if (v.size() != 3 || v2.v.size() != 3) {
-			v3.v.push_back(0.0f);
-			v3.v.push_back(0.0f);
-			v3.v.push_back(0.0f);
-		} else {
-			v3.v.push_back(v[1]*v2.v[2]-v[2]*v2.v[1]);
-			v3.v.push_back(v[2]*v2.v[0]-v[0]*v2.v[2]);
-			v3.v.push_back(v[0]*v2.v[1]-v[1]*v2.v[0]);
-		}
-		return v3;
-	}
-};
-
-struct face {
-	std::vector<int> vertex;
-	std::vector<int> texture;
-	std::vector<int> normal;
-};
-
-class cObj {
-  private:
-	std::vector<vertex> vertices;
-	std::vector<vertex> texcoords;
-	std::vector<vertex> normals;
-	std::vector<vertex> parameters;
-	std::vector<face> faces;
-	GLuint list;
+namespace tinyobj {
     
+    typedef struct
+    {
+        std::string name;
+        
+        float ambient[3];
+        float diffuse[3];
+        float specular[3];
+        float transmittance[3];
+        float emission[3];
+        float shininess;
+        float ior;                // index of refraction
+        
+        std::string ambient_texname;
+        std::string diffuse_texname;
+        std::string specular_texname;
+        std::string normal_texname;
+        std::map<std::string, std::string> unknown_parameter;
+    } material_t;
     
-  protected:
-  public:
-	cObj(std::string filename);
-	~cObj();
-	void compileList();
-	void render();
+    typedef struct
+    {
+        std::vector<float>          positions;
+        std::vector<float>          normals;
+        std::vector<float>          texcoords;
+        std::vector<unsigned int>   indices;
+    } mesh_t;
+    
+    typedef struct
+    {
+        std::string  name;
+        material_t   material;
+        mesh_t       mesh;
+    } shape_t;
+    
+    /// Loads .obj from a file.
+    /// 'shapes' will be filled with parsed shape data
+    /// The function returns error string.
+    /// Returns empty string when loading .obj success.
+    /// 'mtl_basepath' is optional, and used for base path for .mtl file.
+    std::string LoadObj(
+                        std::vector<shape_t>& shapes,   // [output]
+                        std::string filename,
+                        std::string mtl_basepath = NULL);
 };
 
 
-#endif

@@ -129,11 +129,13 @@ void initGraphics()
     decalMenu(0);
     envMapMenu(0);
 
-    Mesh2DPtr mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(4,4)));
+    //Mesh2DPtr mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(4,4)));
 
-    TorusPtr torus = TorusPtr(new Torus(Transform(), material));
-    scene->addObject(torus);
-
+    //TorusPtr torus = TorusPtr(new Torus(Transform(), material));
+    //scene->addObject(torus);
+    ModelPtr model = ModelPtr(new ModelObject("media/monkey.obj", "media/",Transform(),material));
+    //cObj * model = new cObj("media/dragon.obj");
+    scene->addModel(model);
     light = LightPtr(new Light());
     light->setCenter(float3(0,0,0));
     light->setRadius(3.5);
@@ -142,6 +144,9 @@ void initGraphics()
     lightMenu(1);
     scene->addLight(light);
 }
+
+
+
 
 void printMatrices()
 {
@@ -171,7 +176,8 @@ void doGraphics()
         GLfloat m[4][4];
 
         build_rotmatrix(m, curquat);
-        scene->object_list[0]->transform.setMatrix(m);
+        //`scene->object_list[0]->transform.setMatrix(m);
+        scene->models->transform.setMatrix(m);
     }
     scene->draw();
 #if 0

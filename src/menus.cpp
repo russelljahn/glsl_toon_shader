@@ -193,8 +193,10 @@ void shaderMenu(int item)
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
 
-    scene->object_list[0]->fragment_filename = filename;
-    scene->object_list[0]->loadProgram();
+    //scene->object_list[0]->fragment_filename = filename;
+    //scene->object_list[0]->loadProgram();
+    scene->models->fragment_filename =filename;
+    scene->models->loadProgram();
     material->bindTextures();
     glutPostRedisplay();
 }
