@@ -19,7 +19,7 @@ SHADER_SCENE_C = \
 
 SHADER_SCENE_CPP = \
   misc.cpp \
-  obj.cpp \
+  tiny_obj_loader.cpp\
   inverse.cpp \
   normalize.cpp \
   sqrt.cpp \

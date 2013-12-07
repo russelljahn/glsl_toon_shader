@@ -29,8 +29,6 @@
 
 #include "obj.hpp"
 
-namespace tinyobj {
-    
     struct vertex_index {
         int v_idx, vt_idx, vn_idx;
         vertex_index() {};
@@ -660,7 +658,6 @@ namespace tinyobj {
         return err.str();
     }
 
-    
-};
+
 
 

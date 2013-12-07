@@ -34,4 +34,4 @@ objs.debug/menus.o: menus.cpp include/Cg/double.hpp include/Cg/vector.hpp \
   /opt/local/include/boost/smart_ptr/detail/yield_k.hpp \
   /opt/local/include/boost/memory_order.hpp \
   /opt/local/include/boost/smart_ptr/detail/operator_bool.hpp scene.hpp \
-  glmatrix.hpp obj.hpp menus.hpp global.hpp
+  glmatrix.hpp tiny_obj_loader.hpp menus.hpp global.hpp

@@ -8,8 +8,6 @@
 #include <vector>
 #include <map>
 
-namespace tinyobj {
-    
     typedef struct
     {
         std::string name;
@@ -53,6 +51,5 @@ namespace tinyobj {
                         std::vector<shape_t>& shapes,   // [output]
                         std::string filename,
                         std::string mtl_basepath = NULL);
-};
 
 
