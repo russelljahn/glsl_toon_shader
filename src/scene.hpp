@@ -31,7 +31,7 @@ using boost::shared_ptr;
 
 #include "texture.hpp"
 
-#include "obj.hpp"
+#include "tiny_obj_loader.hpp"
 
 using namespace Cg;
 
@@ -300,7 +300,6 @@ struct Scene {
     View view;
     vector<LightPtr> light_list;
     vector<ObjectPtr> object_list;
-    vector<tinyobj::shape_t> shapes;
     CubeMapPtr envmap;
     ModelPtr models;
     Scene(const Camera& c, const View& v);
