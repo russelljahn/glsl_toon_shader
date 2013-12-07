@@ -35,6 +35,10 @@ using boost::shared_ptr;
 
 using namespace Cg;
 
+
+
+
+
 class Transform {
     float4x4 matrix;
 
@@ -56,6 +60,10 @@ public:
 };
 typedef shared_ptr<Transform> TransformPtr;
 
+
+
+
+
 struct Camera {
     float fov_degrees;
     float aspect_ratio;
@@ -76,10 +84,18 @@ struct Camera {
     void validate();
 };
 
+
+
+
+
 struct Geometry {
     virtual void draw() {}
 };
 typedef shared_ptr<Geometry> GeometryPtr;
+
+
+
+
 
 class Mesh2D : Geometry {
     float2 xy_min, xy_max;
@@ -101,6 +117,10 @@ public:
 };
 typedef shared_ptr<Mesh2D> Mesh2DPtr;
 
+
+
+
+
 struct GLSLShader {
     GLenum shader_type;
     GLint bytes;
@@ -121,15 +141,27 @@ struct GLSLShader {
 };
 typedef shared_ptr<GLSLShader> GLSLShaderPtr;
 
+
+
+
+
 struct FragmentShader : GLSLShader {
     FragmentShader(int len, const char *s);
     FragmentShader();
 };
 
+
+
+
+
 struct VertexShader : GLSLShader {
     VertexShader(int len, const char *s);
     VertexShader();
 };
+
+
+
+
 
 struct GLSLProgram {
     GLuint vertex_shader;
@@ -154,16 +186,28 @@ struct GLSLProgram {
     ~GLSLProgram();
 };
 
+
+
+
+
 struct SurfaceShader {
     virtual void bind() = 0;
 };
 typedef shared_ptr<SurfaceShader> SurfaceShaderPtr;
+
+
+
+
 
 struct DiffuseShader : SurfaceShader {
     GLuint shader_object;
 
     float3 diffuse_color;
 };
+
+
+
+
 
 struct View {
     float3 initial_at_position;
@@ -196,6 +240,10 @@ struct View {
     View& operator =(const View& rhs);
 };
 typedef shared_ptr<View> ViewPtr;
+
+
+
+
 
 class Light {
 private:
@@ -232,6 +280,10 @@ public:
 };
 typedef shared_ptr<Light> LightPtr;
 
+
+
+
+
 struct Material {
     float4 ambient;
     float4 diffuse;
@@ -251,6 +303,10 @@ struct Material {
 };
 typedef shared_ptr<Material> MaterialPtr;
 
+
+
+
+
 struct Object {
     string vertex_filename;
     string fragment_filename;
@@ -269,6 +325,10 @@ struct Object {
 };
 typedef shared_ptr<Object> ObjectPtr;
 
+
+
+
+
 class Torus : public Object {
 private:
     Mesh2DPtr mesh2d;
@@ -280,6 +340,10 @@ public:
     void draw(const View& view, LightPtr light);
 };
 typedef shared_ptr<Torus> TorusPtr;
+
+
+
+
 
 class ModelObject : public Object {
 private:
@@ -293,6 +357,9 @@ public:
     void draw(const View& view, LightPtr light);
 };
 typedef shared_ptr<ModelObject> ModelPtr;
+
+
+
 
 
 struct Scene {

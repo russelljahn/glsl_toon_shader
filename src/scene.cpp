@@ -505,6 +505,7 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
 {
     std::string err = tinyobj::LoadObj(shapes, filename.c_str(), basepath.c_str());
     
+
     if (!err.empty()) {
         std::cerr << err << std::endl;
         return;
@@ -589,11 +590,64 @@ void ModelObject::draw(const View& view, LightPtr light) {
     program.setVec1f("shininess", material->shininess);
     
     program.setMat3f("objectToWorld", transform);
-    ////ERR_CHECK();
+
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
     //mesh2d->draw();
-    //obj->render();
+
+    GLuint list;
+    glNewList(list, GL_COMPILE);
+
+    /* For every shape... */
+    for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
+
+        assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
+
+        /* For every triangle face in the mesh... */
+        for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+            glBegin(GL_TRIANGLES);
+
+            size_t vertexId = shapes[shapeId].mesh.indices[indexId];
+
+            glNormal3f(
+                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId+1], 
+                shapes[shapeId].mesh.normals[3*vertexId+2]
+            );
+            glVertex3f(
+                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId+1], 
+                shapes[shapeId].mesh.positions[3*vertexId+2]
+            );
+
+            vertexId = shapes[shapeId].mesh.indices[indexId+1];
+            glNormal3f(
+                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId+1], 
+                shapes[shapeId].mesh.normals[3*vertexId+2]
+            );
+            glVertex3f(
+                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId+1], 
+                shapes[shapeId].mesh.positions[3*vertexId+2]
+            );
+
+            vertexId = shapes[shapeId].mesh.indices[indexId+2];
+            glNormal3f(
+                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId+1], 
+                shapes[shapeId].mesh.normals[3*vertexId+2]
+            );
+            glVertex3f(
+                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId+1], 
+                shapes[shapeId].mesh.positions[3*vertexId+2]
+            );
+
+        }
+    }
+     glEndList();
+    glCallList(list);
     popGLMatrix(GL_MODELVIEW);
 }
 
