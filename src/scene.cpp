@@ -580,6 +580,8 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     // LM = Light color modulated by Matrial color
     // a,d,s = ambient, diffuse, specular
+
+    
     
     float4 LMa = material->ambient*light->getColor();
     program.setVec4f("LMa", LMa);
@@ -610,36 +612,36 @@ void ModelObject::draw(const View& view, LightPtr light) {
             size_t vertexId = shapes[shapeId].mesh.indices[indexId];
 
             glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId], 
                 shapes[shapeId].mesh.normals[3*vertexId+1], 
                 shapes[shapeId].mesh.normals[3*vertexId+2]
             );
             glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId], 
                 shapes[shapeId].mesh.positions[3*vertexId+1], 
                 shapes[shapeId].mesh.positions[3*vertexId+2]
             );
 
             vertexId = shapes[shapeId].mesh.indices[indexId+1];
             glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId], 
                 shapes[shapeId].mesh.normals[3*vertexId+1], 
                 shapes[shapeId].mesh.normals[3*vertexId+2]
             );
             glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId], 
                 shapes[shapeId].mesh.positions[3*vertexId+1], 
                 shapes[shapeId].mesh.positions[3*vertexId+2]
             );
 
             vertexId = shapes[shapeId].mesh.indices[indexId+2];
             glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId+0], 
+                shapes[shapeId].mesh.normals[3*vertexId], 
                 shapes[shapeId].mesh.normals[3*vertexId+1], 
                 shapes[shapeId].mesh.normals[3*vertexId+2]
             );
             glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId+0], 
+                shapes[shapeId].mesh.positions[3*vertexId], 
                 shapes[shapeId].mesh.positions[3*vertexId+1], 
                 shapes[shapeId].mesh.positions[3*vertexId+2]
             );
