@@ -79,26 +79,26 @@ void bumpyMenu(int item)
 static const struct {
     const char *name;
     const char *filename;
-} decal_list[] = {
-    { "Texas Longhorn", "tga/texas_longhorn_decal.tga" },
+} texture_list[] = {
+    { "Texas Longhorn", "tga/texas_longhorn_texture.tga" },
     { "Solid white", "tga/solid_white.tga" },
-    { "Brick", "tga/brick_decal.tga" },
+    { "Brick", "tga/brick_texture.tga" },
     { "GeForce", "tga/geforce.tga" },
     { "Solid green", "tga/solid_green.tga" },
     { "Green stripes", "tga/green_stripes.tga" },
 };
 
-void decalMenu(int item)
+void textureMenu(int item)
 {
-    assert(item < (int)countof(decal_list));
+    assert(item < (int)countof(texture_list));
 
-    const char *filename = decal_list[item].filename;
+    const char *filename = texture_list[item].filename;
 
-    Texture2DPtr decal(new Texture2D(filename));
-    decal->load();
-    decal->tellGL();
+    Texture2DPtr texture(new Texture2D(filename));
+    texture->load();
+    texture->tellGL();
 
-    material->decal = decal;
+    material->texture = texture;
     material->bindTextures();
     glutPostRedisplay();
 }
@@ -173,17 +173,16 @@ static const struct {
     const char *name;
     const char *filename;
 } shader_list[] = {
-    { "0 Red",                 "glsl/00_red.frag" },
-    { "1 Decal",               "glsl/01_decal.frag" },
-    { "2 Diffuse",             "glsl/02_diffuse.frag" },
-    { "3 Bumpy diffuse",       "glsl/03_bump_diffuse.frag" },
-    { "4 Specular",            "glsl/04_specular.frag" },
-    { "5 Diffuse + specular",  "glsl/05_diffspec.frag" },
-    { "6 Bump lit",            "glsl/06_bump_lit.frag" },
-    { "7 Reflection",          "glsl/07_reflection.frag" },
-    { "8 Bumpy reflection",    "glsl/08_bump_reflection.frag" },
-    { "9 Combo",               "glsl/09_combo.frag" },
-    { "10 Toon",               "glsl/10_toon.frag" }
+    { "Phong, No Texture",   "glsl/phong.frag" },
+    { "Decal",               "glsl/texture.frag" },
+    { "Diffuse",             "glsl/diffuse.frag" },
+    { "Bumpy diffuse",       "glsl/03_bump_diffuse.frag" },
+    { "Specular",            "glsl/specular.frag" },
+    { "Bump lit",            "glsl/06_bump_lit.frag" },
+    { "Reflection",          "glsl/07_reflection.frag" },
+    { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
+    { "Toon Simple",         "glsl/toon_simple.frag" },
+    { "Toon",                "glsl/10_toon.frag" }
 };
 
 void shaderMenu(int item)
@@ -195,7 +194,7 @@ void shaderMenu(int item)
 
     //scene->object_list[0]->fragment_filename = filename;
     //scene->object_list[0]->loadProgram();
-    scene->models->fragment_filename =filename;
+    scene->models->fragment_filename = filename;
     scene->models->loadProgram();
     material->bindTextures();
     glutPostRedisplay();
@@ -223,14 +222,14 @@ static void menu(int item)
 
 void initMenus()
 {
-    int decal_menu = glutCreateMenu(decalMenu);
-    for (size_t i=0; i<countof(decal_list); i++) {
-        glutAddMenuEntry(decal_list[i].name, i);
+    int texture_menu = glutCreateMenu(textureMenu);
+    for (size_t i=0; i<countof(texture_list); i++) {
+        glutAddMenuEntry(texture_list[i].name, i);
     }
-    int bumpy_menu = glutCreateMenu(bumpyMenu);
-    for (size_t i=0; i<countof(bumpy_list); i++) {
-        glutAddMenuEntry(bumpy_list[i].name, i);
-    }
+    // int bumpy_menu = glutCreateMenu(bumpyMenu);
+    // for (size_t i=0; i<countof(bumpy_list); i++) {
+    //     glutAddMenuEntry(bumpy_list[i].name, i);
+    // }
     int material_menu = glutCreateMenu(materialMenu);
     for (size_t i=0; i<countof(material_list); i++) {
         glutAddMenuEntry(material_list[i].name, i);
@@ -248,8 +247,8 @@ void initMenus()
         glutAddMenuEntry(shader_list[i].name, i);
     }
     glutCreateMenu(menu);
-    glutAddSubMenu("Decal texture...", decal_menu);
-    glutAddSubMenu("Bump texture...", bumpy_menu);
+    glutAddSubMenu("Decal texture...", texture_menu);
+    // glutAddSubMenu("Bump texture...", bumpy_menu);
     glutAddSubMenu("Material...", material_menu);
     glutAddSubMenu("Environments...", envmap_menu);
     glutAddSubMenu("Light color...", light_menu);

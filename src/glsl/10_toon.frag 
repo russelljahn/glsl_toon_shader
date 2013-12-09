@@ -4,7 +4,7 @@ uniform vec4 LMs; // Light-Material specular
 uniform float shininess;
 
 uniform sampler2D normalMap;
-uniform sampler2D decal;
+uniform sampler2D texture;
 uniform sampler2D heightField;
 uniform samplerCube envmap;
 

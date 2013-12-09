@@ -291,7 +291,7 @@ struct Material {
     float shininess;
 
     NormalMapPtr normal_map;
-    Texture2DPtr decal;
+    Texture2DPtr texture;
     Texture2DPtr height_field;
     CubeMapPtr envmap;
 
@@ -354,6 +354,8 @@ public:
 	ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m);
 	~ModelObject();
     void loadProgram();
+    void loadTexture();
+    void print();
     void draw(const View& view, LightPtr light);
 };
 typedef shared_ptr<ModelObject> ModelPtr;

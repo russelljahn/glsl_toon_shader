@@ -14,7 +14,7 @@ varying vec3 eyeDirection; // out
 varying vec3 normal; // out
 
 uniform sampler2D normalMap;
-uniform sampler2D decal;
+uniform sampler2D texture;
 uniform sampler2D heightField;
 uniform samplerCube envmap;
 

@@ -400,7 +400,7 @@ void Torus::loadProgram()
 
             // Assign samplers statically to texture units 0 through 3
             program.setSampler("normalMap", 0);
-            program.setSampler("decal", 1);
+            program.setSampler("texture", 1);
             program.setSampler("heightField", 2);
             program.setSampler("envmap", 3);
         } else {
@@ -485,7 +485,7 @@ void ModelObject::loadProgram()
             
             // Assign samplers statically to texture units 0 through 3
             program.setSampler("normalMap", 0);
-            program.setSampler("decal", 1);
+            program.setSampler("texture", 1);
             program.setSampler("heightField", 2);
             program.setSampler("envmap", 3);
         } else {
@@ -512,59 +512,64 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
         return;
     }
     
-    // std::cout << "# of shapes : " << shapes.size() << std::endl;
-    
-    // for (size_t i = 0; i < shapes.size(); i++) {
-    //     printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
-    //     printf("shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
-    //     assert((shapes[i].mesh.indices.size() % 3) == 0);
-    //     for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
-    //         printf("  idx[%ld] = %d\n", f, shapes[i].mesh.indices[f]);
-    //     }
-        
-    //     printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
-    //     assert((shapes[i].mesh.positions.size() % 3) == 0);
-    //     for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-    //         printf("  v[%ld] = (%f, %f, %f)\n", v,
-    //                shapes[i].mesh.positions[3*v+0],
-    //                shapes[i].mesh.positions[3*v+1],
-    //                shapes[i].mesh.positions[3*v+2]);
-    //     }
-        
-    //     printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str());
-    //     printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]);
-    //     printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]);
-    //     printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]);
-    //     printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]);
-    //     printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]);
-    //     printf("  material.Ns = %f\n", shapes[i].material.shininess);
-    //     printf("  material.Ni = %f\n", shapes[i].material.ior);
-    //     printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str());
-    //     printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str());
-    //     printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str());
-    //     printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str());
-    //     std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin());
-    //     std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end());
-    //     for (; it != itEnd; it++) {
-    //         printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
-    //     }
-    //     printf("\n");
-    // }
+    // print();
     
     
     //obj = new cObj(filename);
     
     vertex_filename = "glsl/model.vert";
-    fragment_filename = "glsl/00_red.frag";
+    fragment_filename = "glsl/phong.frag";
     
     //mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(80,40)));
     
+    loadTexture();
     loadProgram();
     
     material->bindTextures();
 }
 
 ModelObject::~ModelObject() {
+}
+
+void ModelObject::print() {
+    std::cout << "# of shapes : " << shapes.size() << std::endl;
+
+    for (size_t i = 0; i < shapes.size(); i++) {
+        printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
+        printf("shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
+        assert((shapes[i].mesh.indices.size() % 3) == 0);
+        for (size_t f = 0; f < shapes[i].mesh.indices.size(); f++) {
+            printf("  idx[%ld] = %d\n", f, shapes[i].mesh.indices[f]);
+        }
+
+        printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
+        assert((shapes[i].mesh.positions.size() % 3) == 0);
+        for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
+            printf("  v[%ld] = (%f, %f, %f)\n", v,
+                   shapes[i].mesh.positions[3*v+0],
+                   shapes[i].mesh.positions[3*v+1],
+                   shapes[i].mesh.positions[3*v+2]);
+        }
+
+        printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str());
+        printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]);
+        printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]);
+        printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]);
+        printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]);
+        printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]);
+        printf("  material.Ns = %f\n", shapes[i].material.shininess);
+        printf("  material.Ni = %f\n", shapes[i].material.ior);
+        printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str());
+        printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str());
+        printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str());
+        printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str());
+        std::map<std::string, std::string>::iterator it(shapes[i].material.unknown_parameter.begin());
+        std::map<std::string, std::string>::iterator itEnd(shapes[i].material.unknown_parameter.end());
+        for (; it != itEnd; it++) {
+            printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
+        }
+    }
+    printf("\n");
 }
 
 void ModelObject::draw(const View& view, LightPtr light) {
@@ -581,18 +586,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     // LM = Light color modulated by Matrial color
     // a,d,s = ambient, diffuse, specular
-
-  //   printf("shape[%ld].material.name = %s\n", i, shapes[i].material.name.c_str());
-  // printf("  material.Ka = (%f, %f ,%f)\n", shapes[i].material.ambient[0], shapes[i].material.ambient[1], shapes[i].material.ambient[2]);
-  // printf("  material.Kd = (%f, %f ,%f)\n", shapes[i].material.diffuse[0], shapes[i].material.diffuse[1], shapes[i].material.diffuse[2]);
-  // printf("  material.Ks = (%f, %f ,%f)\n", shapes[i].material.specular[0], shapes[i].material.specular[1], shapes[i].material.specular[2]);
-  // printf("  material.Tr = (%f, %f ,%f)\n", shapes[i].material.transmittance[0], shapes[i].material.transmittance[1], shapes[i].material.transmittance[2]);
-  // printf("  material.Ke = (%f, %f ,%f)\n", shapes[i].material.emission[0], shapes[i].material.emission[1], shapes[i].material.emission[2]);
-  // printf("  material.Ns = %f\n", shapes[i].material.shininess);
-  // printf("  material.map_Ka = %s\n", shapes[i].material.ambient_texname.c_str());
-  // printf("  material.map_Kd = %s\n", shapes[i].material.diffuse_texname.c_str());
-  // printf("  material.map_Ks = %s\n", shapes[i].material.specular_texname.c_str());
-  // printf("  material.map_Ns = %s\n", shapes[i].material.normal_texname.c_str());
     
     float4 LMa = material->ambient*light->getColor();
     program.setVec4f("LMa", LMa);
@@ -616,49 +609,82 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
         /* For every triangle face in the mesh... */
         for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+            
+            float2 uvs;
+
             glBegin(GL_TRIANGLES);
-            size_t vertexId = shapes[shapeId].mesh.indices[indexId];
 
-            glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId], 
-                shapes[shapeId].mesh.normals[3*vertexId+1], 
-                shapes[shapeId].mesh.normals[3*vertexId+2]
-            );
-            glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId], 
-                shapes[shapeId].mesh.positions[3*vertexId+1], 
-                shapes[shapeId].mesh.positions[3*vertexId+2]
-            );
+                /* Vertex 0. */
+                size_t vertexId = shapes[shapeId].mesh.indices[indexId];
+                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                program.setVec2f("uvs", uvs);
+                glNormal3f(
+                    shapes[shapeId].mesh.normals[3*vertexId], 
+                    shapes[shapeId].mesh.normals[3*vertexId+1], 
+                    shapes[shapeId].mesh.normals[3*vertexId+2]
+                );
+                glVertex3f(
+                    shapes[shapeId].mesh.positions[3*vertexId], 
+                    shapes[shapeId].mesh.positions[3*vertexId+1], 
+                    shapes[shapeId].mesh.positions[3*vertexId+2]
+                );
 
-            vertexId = shapes[shapeId].mesh.indices[indexId+1];
-            glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId], 
-                shapes[shapeId].mesh.normals[3*vertexId+1], 
-                shapes[shapeId].mesh.normals[3*vertexId+2]
-            );
-            glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId], 
-                shapes[shapeId].mesh.positions[3*vertexId+1], 
-                shapes[shapeId].mesh.positions[3*vertexId+2]
-            );
+                /* Vertex 1. */
+                vertexId = shapes[shapeId].mesh.indices[indexId+1];
+                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                program.setVec2f("uvs", uvs);
+                glNormal3f(
+                    shapes[shapeId].mesh.normals[3*vertexId], 
+                    shapes[shapeId].mesh.normals[3*vertexId+1], 
+                    shapes[shapeId].mesh.normals[3*vertexId+2]
+                );
+                glVertex3f(
+                    shapes[shapeId].mesh.positions[3*vertexId], 
+                    shapes[shapeId].mesh.positions[3*vertexId+1], 
+                    shapes[shapeId].mesh.positions[3*vertexId+2]
+                );
 
-            vertexId = shapes[shapeId].mesh.indices[indexId+2];
-            glNormal3f(
-                shapes[shapeId].mesh.normals[3*vertexId], 
-                shapes[shapeId].mesh.normals[3*vertexId+1], 
-                shapes[shapeId].mesh.normals[3*vertexId+2]
-            );
-            glVertex3f(
-                shapes[shapeId].mesh.positions[3*vertexId], 
-                shapes[shapeId].mesh.positions[3*vertexId+1], 
-                shapes[shapeId].mesh.positions[3*vertexId+2]
-            );
+                /* Vertex 2. */
+                vertexId = shapes[shapeId].mesh.indices[indexId+2];
+                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                program.setVec2f("uvs", uvs);
+                glNormal3f(
+                    shapes[shapeId].mesh.normals[3*vertexId], 
+                    shapes[shapeId].mesh.normals[3*vertexId+1], 
+                    shapes[shapeId].mesh.normals[3*vertexId+2]
+                );
+                glVertex3f(
+                    shapes[shapeId].mesh.positions[3*vertexId], 
+                    shapes[shapeId].mesh.positions[3*vertexId+1], 
+                    shapes[shapeId].mesh.positions[3*vertexId+2]
+                );
+
             glEnd();
         }
     }
    
     popGLMatrix(GL_MODELVIEW);
 }
+
+
+void ModelObject::loadTexture() {
+
+    const std::string filename = shapes[0].material.diffuse_texname;
+    // const std::string filename = "tga/brick_texture.tga"; // Should work, but doesn't.
+
+    std::cout << "Loading image at: " << filename << std::endl;
+
+    Texture2DPtr texture(new Texture2D(filename.c_str()));
+    texture->load();
+    texture->tellGL();
+
+    material->texture = texture;
+    material->bindTextures();
+}
+
 
 void Camera::validate()
 {
@@ -1015,8 +1041,8 @@ void Material::bindTextures()
     if (normal_map) {
         normal_map->bind(GL_TEXTURE0);
     }
-    if (decal) {
-        decal->bind(GL_TEXTURE1);
+    if (texture) {
+        texture->bind(GL_TEXTURE1);
     }
     if (height_field) {
         height_field->bind(GL_TEXTURE2);
@@ -1034,7 +1060,7 @@ Material& Material::operator =(const Material& rhs)
         specular = rhs.specular;
         shininess = rhs.shininess;
         normal_map = rhs.normal_map;
-        decal = rhs.decal;
+        texture = rhs.texture;
         height_field = rhs.height_field;
     }
     return *this;

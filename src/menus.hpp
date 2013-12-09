@@ -8,7 +8,7 @@
 
 void envMapMenu(int item);
 void bumpyMenu(int item);
-void decalMenu(int item);
+void textureMenu(int item);
 void materialMenu(int item);
 void lightMenu(int item);
 void shaderMenu(int item);

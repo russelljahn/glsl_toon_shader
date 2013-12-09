@@ -8,7 +8,7 @@ In this project, you'll write GLSL shaders.  These shaders will:
 
   *  implement ambient, diffuse, and specular light contribution
 
-  *  sample a surface decal stored in a 2D texture
+  *  sample a surface texture stored in a 2D texture
 
   *  implement per-fragment normal mapping
 
