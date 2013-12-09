@@ -4,20 +4,21 @@ uniform vec4 LMd; // Light-Material diffuse
 uniform vec4 LMs; // Light-Material specular
 uniform float shininess;
 
+uniform vec2 uvs; // in
+uniform vec3 lightPosition; // Object-space
+uniform vec3 eyePosition; // Object-space
+
+varying vec2 normalMapTexCoord; // out
+varying vec3 lightDirection; // out
+varying vec3 eyeDirection; // out
+varying vec3 normal; // out
+
 uniform sampler2D normalMap;
 uniform sampler2D decal;
 uniform sampler2D heightField;
 uniform samplerCube envmap;
 
-uniform mat3 objectToWorld;
-
-varying vec2 normalMapTexCoord;
-varying vec3 lightDirection;
-varying vec3 eyeDirection;
-varying vec3 halfAngle;
-varying vec3 c0, c1, c2;
-
-void main()
-{
-  gl_FragColor = vec4(1,0,0,1);  // XXX fix me
+void main() {
+	float diffuse = dot(lightDirection, normal);
+ 	gl_FragColor = clamp(LMa + LMd*diffuse, 0.0, 1.0);
 }

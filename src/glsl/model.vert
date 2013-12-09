@@ -18,12 +18,14 @@ uniform sampler2D decal;
 uniform sampler2D heightField;
 uniform samplerCube envmap;
 
-void main() {
 
-	float diffuse = dot(lightDirection, normal);
 
-	float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
-	float specular = pow(amountLightToEye, shininess);
+void main (void)
+{
+    vec3 vertexInModelViewSpace = vec3(gl_Vertex);
+    normal = normalize(gl_Normal);
 
-	gl_FragColor = clamp(LMa + LMd*diffuse + specular*LMs, 0.0, 1.0);
+    lightDirection = normalize(lightPosition - vertexInModelViewSpace);
+    eyeDirection = normalize(eyePosition - vertexInModelViewSpace);
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

@@ -17,7 +17,7 @@ varying vec3 eyeDirection;
 varying vec3 halfAngle;
 varying vec3 c0, c1, c2;
 
-void main()
-{
+void main() {
+
   gl_FragColor = vec4(1,0,0,1);  // XXX fix me
 }
