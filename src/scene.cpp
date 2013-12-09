@@ -512,7 +512,7 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
         return;
     }
     
-    // print();
+    print();
     
     
     //obj = new cObj(filename);
@@ -522,7 +522,7 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
     
     //mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(80,40)));
     
-    loadTexture();
+    // loadTexture();
     loadProgram();
     
     material->bindTextures();
@@ -586,7 +586,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     // LM = Light color modulated by Matrial color
     // a,d,s = ambient, diffuse, specular
-    
+
     float4 LMa = material->ambient*light->getColor();
     program.setVec4f("LMa", LMa);
     float4 LMd = material->diffuse*light->getColor();
@@ -600,6 +600,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
     // mesh2d->draw();
+    
     
 
     /* For every shape... */
@@ -616,9 +617,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
                 /* Vertex 0. */
                 size_t vertexId = shapes[shapeId].mesh.indices[indexId];
-                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                program.setVec2f("uvs", uvs);
+                if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    program.setVec2f("uvs", uvs);
+                }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 
@@ -632,9 +635,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
                 /* Vertex 1. */
                 vertexId = shapes[shapeId].mesh.indices[indexId+1];
-                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                program.setVec2f("uvs", uvs);
+                if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    program.setVec2f("uvs", uvs);
+                }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 
@@ -648,9 +653,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
                 /* Vertex 2. */
                 vertexId = shapes[shapeId].mesh.indices[indexId+2];
-                uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                program.setVec2f("uvs", uvs);
+                if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    program.setVec2f("uvs", uvs);
+                }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 

@@ -222,10 +222,10 @@ static void menu(int item)
 
 void initMenus()
 {
-    int texture_menu = glutCreateMenu(textureMenu);
-    for (size_t i=0; i<countof(texture_list); i++) {
-        glutAddMenuEntry(texture_list[i].name, i);
-    }
+    // int texture_menu = glutCreateMenu(textureMenu);
+    // for (size_t i=0; i<countof(texture_list); i++) {
+    //     glutAddMenuEntry(texture_list[i].name, i);
+    // }
     // int bumpy_menu = glutCreateMenu(bumpyMenu);
     // for (size_t i=0; i<countof(bumpy_list); i++) {
     //     glutAddMenuEntry(bumpy_list[i].name, i);
@@ -247,7 +247,7 @@ void initMenus()
         glutAddMenuEntry(shader_list[i].name, i);
     }
     glutCreateMenu(menu);
-    glutAddSubMenu("Decal texture...", texture_menu);
+    // glutAddSubMenu("Decal texture...", texture_menu);
     // glutAddSubMenu("Bump texture...", bumpy_menu);
     glutAddSubMenu("Material...", material_menu);
     glutAddSubMenu("Environments...", envmap_menu);
