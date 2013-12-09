@@ -24,19 +24,19 @@ void main () {
     float diffuse = dot(lightDirection, normal);
     
     if (diffuse > 0.95) {
-        outputColor = vec4 (1.0, 0.5, 0.5, 1.0);
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.9*LMd;
     }
     else if (diffuse > 0.5) {
-        outputColor = vec4 (0.6, 0.3, 0.3, 1.0);
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.625*LMd;
     }
     else if (diffuse > 0.25) {
-        outputColor = vec4 (0.4, 0.2, 0.2, 1.0);
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.25*LMd;
     }
     else {
-        outputColor = vec4 (0.2, 0.1, 0.1, 1.0);
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.1*LMd;
     }
 
-    outputColor *= LMd;
+    outputColor *= diffuse;
     
     gl_FragColor = outputColor;
 }
