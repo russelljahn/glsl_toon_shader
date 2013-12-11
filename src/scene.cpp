@@ -612,23 +612,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
-
-    
-    if(outline){
-        //glCullFace (GL_BACK);
-//        glEnable (GL_CULL_FACE);
-//        glEnable (GL_DEPTH_TEST);
-//        glPointSize (4.f); // Make the points bigger
-//        glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
-//        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
-//        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-       // glDisable (GL_LIGHTING);                // Disable OpenGL Lighting
-
-    }
-    ///  glDisable (GL_LIGHTING);                // Disable OpenGL Lighting
-    
-    
-    
+    if(!outline){
     /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
         
@@ -707,7 +691,8 @@ void ModelObject::draw(const View& view, LightPtr light) {
             glEnd();
         }
     }
-        if(outline){
+    }
+    else{
         
         float       outlineColor[3] = { 255.0f, 255.0f, 255.0f };
         glEnable (GL_BLEND);                // Enable Blending
@@ -716,7 +701,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
         glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
         
         glPolygonMode (GL_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
-        glLineWidth (1.0);         // Set The Line Width
+        glLineWidth (0.3);         // Set The Line Width
         
         glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
         
@@ -737,7 +722,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     
                     // float2 uvs;
                     
-                    glBegin(GL_TRIANGLES);
+                    glBegin(GL_LINES);
                     
                     /* Vertex 0. */
                     size_t vertexId = shapes[shapeId].mesh.indices[indexId];
@@ -784,10 +769,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     glEnd();
                 }
             }
-            
-
-        
-        
         
 		glDepthFunc (GL_LESS);									// Reset The Depth-Testing Mode ( NEW )
         

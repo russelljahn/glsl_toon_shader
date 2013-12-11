@@ -12,6 +12,7 @@ varying vec2 normalMapTexCoord; // out
 varying vec3 lightDirection; // out
 varying vec3 eyeDirection; // out
 varying vec3 normal; // out
+varying vec3 c; // out
 
 uniform sampler2D normalMap;
 uniform sampler2D texture;
@@ -22,15 +23,16 @@ void main () {
 
     vec4 outputColor;
     float diffuse = dot(lightDirection, normal);
-    
+    float Outline = 0.3;
+
     if (diffuse > 0.95) {
-        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.9*LMd;
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 1.0*LMd;
     }
     else if (diffuse > 0.5) {
         outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.625*LMd;
     }
-    else if (diffuse > 0.25) {
-        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.25*LMd;
+    else if (diffuse > 0.05) {
+        outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.35*LMd;
     }
     else {
         outputColor = vec4(1.0, 1.0, 1.0, 1.0) * 0.1*LMd;
@@ -38,5 +40,8 @@ void main () {
 
     outputColor *= diffuse;
     
+    if (dot(normalize(normal), normalize(c))<Outline) {
+        outputColor = vec4(0.0,0.0,0.0,1.0);
+    }
     gl_FragColor = outputColor;
 }

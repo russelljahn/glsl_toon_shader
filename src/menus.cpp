@@ -205,7 +205,7 @@ static const struct {
     const char *name;
     const char *action;
 } extra_list[] = {
-    { "Outline",   "outline" },
+    { "wireframe",   "outline" },
 };
 void extraMenu(int item)
 {
