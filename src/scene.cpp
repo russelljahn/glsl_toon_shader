@@ -648,11 +648,14 @@ void ModelObject::draw(const View& view, LightPtr light) {
             //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
             //     program.setVec2f("uvs", uvs);
             // }
-            glNormal3f(
-                       shapes[shapeId].mesh.normals[3*vertexId],
-                       shapes[shapeId].mesh.normals[3*vertexId+1],
-                       shapes[shapeId].mesh.normals[3*vertexId+2]
-                       );
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
             glVertex3f(
                        shapes[shapeId].mesh.positions[3*vertexId],
                        shapes[shapeId].mesh.positions[3*vertexId+1],
@@ -666,11 +669,14 @@ void ModelObject::draw(const View& view, LightPtr light) {
             //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
             //     program.setVec2f("uvs", uvs);
             // }
-            glNormal3f(
-                       shapes[shapeId].mesh.normals[3*vertexId],
-                       shapes[shapeId].mesh.normals[3*vertexId+1],
-                       shapes[shapeId].mesh.normals[3*vertexId+2]
-                       );
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
             glVertex3f(
                        shapes[shapeId].mesh.positions[3*vertexId],
                        shapes[shapeId].mesh.positions[3*vertexId+1],
@@ -684,11 +690,14 @@ void ModelObject::draw(const View& view, LightPtr light) {
             //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
             //     program.setVec2f("uvs", uvs);
             // }
-            glNormal3f(
-                       shapes[shapeId].mesh.normals[3*vertexId],
-                       shapes[shapeId].mesh.normals[3*vertexId+1],
-                       shapes[shapeId].mesh.normals[3*vertexId+2]
-                       );
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
             glVertex3f(
                        shapes[shapeId].mesh.positions[3*vertexId],
                        shapes[shapeId].mesh.positions[3*vertexId+1],
@@ -703,12 +712,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
         float       outlineColor[3] = { 255.0f, 255.0f, 255.0f };
         glEnable (GL_BLEND);                // Enable Blending
         
-        
         // Set The Blend Mode
         glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
         
         glPolygonMode (GL_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
-        glLineWidth (3.0);         // Set The Line Width
+        glLineWidth (1.0);         // Set The Line Width
         
         glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
         

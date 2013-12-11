@@ -151,7 +151,7 @@ void initGraphics()
 
     //TorusPtr torus = TorusPtr(new Torus(Transform(), material));
     //scene->addObject(torus);
-    ModelPtr model = ModelPtr(new ModelObject("../media/monkey.obj", "../media/",Transform(),material));
+    ModelPtr model = ModelPtr(new ModelObject("../media/f-16.obj", "../media/",Transform(),material));
     //cObj * model = new cObj("media/dragon.obj");
     scene->addModel(model);
     light = LightPtr(new Light());

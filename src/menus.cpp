@@ -179,7 +179,7 @@ static const struct {
     { "Monochrome",          "glsl/monochrome.frag" },
     { "Color Cycle",              "glsl/color_cycle.frag" },
     { "Anti-Diffuse",              "glsl/anti_diffuse.frag" },
-    // { "Specular",            "glsl/specular.frag" },
+    { "Silhouttes",            "glsl/silh.frag" },
     // { "Bump lit",            "glsl/06_bump_lit.frag" },
     // { "Reflection",          "glsl/07_reflection.frag" },
     // { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
