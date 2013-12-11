@@ -16,6 +16,7 @@ varying vec3 lightDirection; // out
 varying vec3 eyeDirection; // out
 varying vec3 normal; // out
 varying vec3 vertexInModelViewSpace; // out
+varying vec3 c ;
 
 uniform sampler2D normalMap;
 uniform sampler2D texture;
@@ -24,11 +25,13 @@ uniform samplerCube envmap;
 
 
 
+
 void main (void)
 {
     vertexInModelViewSpace = vec3(gl_Vertex);
     normal = normalize(gl_Normal);
-
+    vec4 temp = gl_ModelViewMatrix *gl_Vertex;
+    c = vec3(-temp[0],-temp[1], -temp[2]);
     lightDirection = normalize(lightPosition - vertexInModelViewSpace);
     eyeDirection = normalize(eyePosition - vertexInModelViewSpace);
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
