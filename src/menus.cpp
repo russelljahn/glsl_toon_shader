@@ -8,10 +8,52 @@
 #include <Cg/matrix.hpp>
 #include "countof.h"
 
+#include <cstring>
+
 #include "texture.hpp"
 #include "scene.hpp"
 #include "menus.hpp"
 #include "global.hpp"
+
+static const struct {
+    const char *name;
+    const char *pathToFolder; // From media folder
+    const char *filename;
+} model_list[] = {
+    { "Cubey",       "cube/",          "cube.obj" },
+    { "Statue",      "statue/",        "statue.obj" },
+    { "Mario",       "mario/",         "mario.obj" },
+    { "Giant Robot", "giant_robot/",   "giant_robot.obj" },
+    { "R2D2",        "r2d2/",          "R2.obj" },
+    { "Skull",       "skull/",         "skull.obj" },
+    { "Shark",       "shark/",         "shark.obj" },
+    // { "Buddha",      "buddha/",        "buddha.obj" }, // Maybe add back in if model loading gets WAYYYY faster.
+    { "Monkey",      "monkey/",        "monkey.obj" },
+    { "Dragon",      "dragon_smooth/", "dragon_smooth.obj" },
+    { "Bunny",       "bunny/",         "bunny.obj" },
+};
+
+void modelMenu(int item)
+{
+    assert(item < (int)countof(model_list));
+
+    const std::string pathToMediaFolder = "../media/";
+    const std::string file_name = std::string(model_list[item].filename);
+
+    const std::string folder_path = (
+        pathToMediaFolder + 
+        std::string(model_list[item].pathToFolder)
+    );
+
+    std::cout << "file_name: " << file_name << std::endl;
+    std::cout << "folder_path: " << folder_path << std::endl;
+    
+
+    ModelPtr model = ModelPtr(new ModelObject(file_name, folder_path, Transform(), material));
+    scene->changeModel(model);
+
+    glutPostRedisplay();
+}
 
 static const struct {
     const char *name;
@@ -173,20 +215,18 @@ static const struct {
     const char *name;
     const char *filename;
 } shader_list[] = {
-    { "Flat Lighting",   "glsl/phong.frag" },
-    { "Negative",            "glsl/negative.frag" },
-    { "Sepia",               "glsl/sepia.frag" },
-    { "Monochrome",          "glsl/monochrome.frag" },
-    { "Color Cycle",              "glsl/color_cycle.frag" },
-    { "Anti-Diffuse",              "glsl/anti_diffuse.frag" },
-    { "Gooch",            "glsl/gooch.frag" },
+    { "Flat Lighting",           "glsl/phong.frag" },
+    { "Negative",                "glsl/negative.frag" },
+    { "Sepia",                   "glsl/sepia.frag" },
+    { "Monochrome",              "glsl/monochrome.frag" },
+    { "Color Cycle",             "glsl/color_cycle.frag" },
+    { "Noise Stripes & Spirals", "glsl/noise_stripes_spirals.frag" },
+    { "Anti-Diffuse",            "glsl/anti_diffuse.frag" },
+    { "Normals",                 "glsl/normals.frag" },
     { "Facing-Ratio",            "glsl/facing.frag" },
-
-    // { "Bump lit",            "glsl/06_bump_lit.frag" },
-    // { "Reflection",          "glsl/07_reflection.frag" },
-    // { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
-    { "Toon Simple",         "glsl/toon_simple.frag" },
-    // { "Toon",                "glsl/10_toon.frag" }
+    { "Toon Simple 1",             "glsl/toon_simple.frag" },
+    { "Toon Simple 2",           "glsl/toon_simple_glossy.frag" },
+    { "Gooch",                   "glsl/gooch.frag" },
 };
 
 void shaderMenu(int item)
@@ -196,8 +236,6 @@ void shaderMenu(int item)
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
 
-    //scene->object_list[0]->fragment_filename = filename;
-    //scene->object_list[0]->loadProgram();
     scene->models->fragment_filename = filename;
     scene->models->loadProgram();
     material->bindTextures();
@@ -207,8 +245,9 @@ static const struct {
     const char *name;
     const char *action;
 } extra_list[] = {
-    { "wireframe",   "outline" }
+    { "Toggle Wireframe",   "outline" }
 };
+
 void extraMenu(int item)
 {
     assert(item < (int)countof(extra_list));
@@ -216,13 +255,11 @@ void extraMenu(int item)
     const char * action = extra_list[item].action;
     printf("Switching to extra \"%s\"\n", extra_list[item].name);
     
-    //scene->object_list[0]->fragment_filename = filename;
-    //scene->object_list[0]->loadProgram();
     if(strcmp(action,  extra_list[0].name)){
-    scene->models->setOutline();
-    scene->models->loadProgram();
+        scene->models->setOutline();
+        scene->models->loadProgram();
     }
-    //material->bindTextures();
+
     glutPostRedisplay();
 }
 
@@ -248,6 +285,10 @@ static void menu(int item)
 
 void initMenus()
 {
+    int model_menu = glutCreateMenu(modelMenu);
+    for (size_t i=0; i<countof(model_list); i++) {
+        glutAddMenuEntry(model_list[i].name, i);
+    }
     // int texture_menu = glutCreateMenu(textureMenu);
     // for (size_t i=0; i<countof(texture_list); i++) {
     //     glutAddMenuEntry(texture_list[i].name, i);
@@ -277,6 +318,7 @@ void initMenus()
         glutAddMenuEntry(extra_list[i].name, i);
     }
     glutCreateMenu(menu);
+    glutAddSubMenu("Load model...", model_menu);
     // glutAddSubMenu("Decal texture...", texture_menu);
     // glutAddSubMenu("Bump texture...", bumpy_menu);
     glutAddSubMenu("Material...", material_menu);

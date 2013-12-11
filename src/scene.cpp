@@ -511,11 +511,12 @@ void ModelObject::loadProgram()
     }
 }
 
-ModelObject::ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m)
-: Object(t, m)
+ModelObject::ModelObject(std::string file_name, std::string folder_path, Transform t, MaterialPtr m)
+: Object(t, m), filename(file_name), folderpath(folder_path)
 {
+    std::cout << "Constructing '" << filename << "'" << std::endl;
     outline = false;
-    std::string err = tinyobj::LoadObj(shapes, filename.c_str(), basepath.c_str());
+    std::string err = tinyobj::LoadObj(shapes, (folderpath+filename).c_str(), folderpath.c_str());
     
 
     if (!err.empty()) {
@@ -523,8 +524,7 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
         return;
     }
     
-    print();
-    
+    // print(); 
     
     vertex_filename = "glsl/model.vert";
     fragment_filename = "glsl/phong.frag";
@@ -538,6 +538,7 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
 }
 
 ModelObject::~ModelObject() {
+    std::cout << "Destructing '" << filename << "'" << std::endl;
 }
 
 void ModelObject::print() {
@@ -1120,7 +1121,7 @@ void Scene::draw()
         envmap->draw(10);
     }
 }
-void Scene::addModel(ModelPtr object)
+void Scene::changeModel(ModelPtr object)
 {
     models = object;
 }

@@ -349,10 +349,12 @@ class ModelObject : public Object {
 private:
     std::vector<tinyobj::shape_t> shapes;
     bool outline;
+    const std::string filename;
+    const std::string folderpath;
 protected:
     
 public:
-	ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m);
+	ModelObject(std::string file_name, std::string folder_path, Transform t, MaterialPtr m);
 	~ModelObject();
     void loadProgram();
     void loadTexture();
@@ -378,7 +380,7 @@ struct Scene {
     void setCamera(const Camera& c);
     void draw();
     void addObject(ObjectPtr object);
-    void addModel(ModelPtr object);
+    void changeModel(ModelPtr object);
     void addLight(LightPtr light);
     void setEnvMap(CubeMapPtr envmap);
     void setLights();

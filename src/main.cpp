@@ -142,18 +142,12 @@ void initGraphics()
 
     material = MaterialPtr(new Material());
     // A little hacky - pick initial values from menu items
+    modelMenu(0);
     materialMenu(0);
     // bumpyMenu(0);
     // textureMenu(0);
     envMapMenu(0);
 
-    //Mesh2DPtr mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(4,4)));
-
-    //TorusPtr torus = TorusPtr(new Torus(Transform(), material));
-    //scene->addObject(torus);
-    ModelPtr model = ModelPtr(new ModelObject("../media/dragon_smooth.obj", "../media/",Transform(),material));
-    //cObj * model = new cObj("media/dragon.obj");
-    scene->addModel(model);
     light = LightPtr(new Light());
     light->setCenter(float3(0,0,0));
     light->setRadius(3.5);
