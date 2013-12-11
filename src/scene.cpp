@@ -615,113 +615,180 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
     
     if(outline){
-        glCullFace (GL_BACK);
+        //glCullFace (GL_BACK);
 //        glEnable (GL_CULL_FACE);
 //        glEnable (GL_DEPTH_TEST);
 //        glPointSize (4.f); // Make the points bigger
 //        glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
 //        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
 //        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+       // glDisable (GL_LIGHTING);                // Disable OpenGL Lighting
+
+    }
+    ///  glDisable (GL_LIGHTING);                // Disable OpenGL Lighting
+    
+    
+    
+    /* For every shape... */
+    for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
+        
+        // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
+        
+        /* For every triangle face in the mesh... */
+        for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+            
+            // float2 uvs;
+            
+            glBegin(GL_TRIANGLES);
+            
+            /* Vertex 0. */
+            size_t vertexId = shapes[shapeId].mesh.indices[indexId];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            glNormal3f(
+                       shapes[shapeId].mesh.normals[3*vertexId],
+                       shapes[shapeId].mesh.normals[3*vertexId+1],
+                       shapes[shapeId].mesh.normals[3*vertexId+2]
+                       );
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            /* Vertex 1. */
+            vertexId = shapes[shapeId].mesh.indices[indexId+1];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            glNormal3f(
+                       shapes[shapeId].mesh.normals[3*vertexId],
+                       shapes[shapeId].mesh.normals[3*vertexId+1],
+                       shapes[shapeId].mesh.normals[3*vertexId+2]
+                       );
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            /* Vertex 2. */
+            vertexId = shapes[shapeId].mesh.indices[indexId+2];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            glNormal3f(
+                       shapes[shapeId].mesh.normals[3*vertexId],
+                       shapes[shapeId].mesh.normals[3*vertexId+1],
+                       shapes[shapeId].mesh.normals[3*vertexId+2]
+                       );
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            glEnd();
+        }
+    }
+        if(outline){
+        
+        float       outlineColor[3] = { 255.0f, 255.0f, 255.0f };
         glEnable (GL_BLEND);                // Enable Blending
+        
+        
         // Set The Blend Mode
         glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
         
         glPolygonMode (GL_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
-        glLineWidth (0.7);         // Set The Line Width
+        glLineWidth (3.0);         // Set The Line Width
         
         glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
         
         glDepthFunc (GL_LEQUAL);            // Change The Depth Mode
         
-        glColor3f (0.0,0.0,0.0);          // Set The Outline Color
-
-    }
-    else{
-    
-    }
-
-    /* For every shape... */
-    for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
-
-        // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
-
-        /* For every triangle face in the mesh... */
-        for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+        glColor3fv (&outlineColor[0]);          // Set The Outline Color
+        
+        
             
-            // float2 uvs;
+            
+            /* For every shape... */
+            for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
+                
+                // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
+                
+                /* For every triangle face in the mesh... */
+                for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+                    
+                    // float2 uvs;
+                    
+                    glBegin(GL_TRIANGLES);
+                    
+                    /* Vertex 0. */
+                    size_t vertexId = shapes[shapeId].mesh.indices[indexId];
+                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    //     program.setVec2f("uvs", uvs);
+                    // }
+                    
+                    glVertex3f(
+                               shapes[shapeId].mesh.positions[3*vertexId],
+                               shapes[shapeId].mesh.positions[3*vertexId+1],
+                               shapes[shapeId].mesh.positions[3*vertexId+2]
+                               );
+                    
+                    /* Vertex 1. */
+                    vertexId = shapes[shapeId].mesh.indices[indexId+1];
+                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    //     program.setVec2f("uvs", uvs);
+                    // }
+                    
+                    glVertex3f(
+                               shapes[shapeId].mesh.positions[3*vertexId],
+                               shapes[shapeId].mesh.positions[3*vertexId+1],
+                               shapes[shapeId].mesh.positions[3*vertexId+2]
+                               );
+                    
+                    /* Vertex 2. */
+                    vertexId = shapes[shapeId].mesh.indices[indexId+2];
+                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                    //     program.setVec2f("uvs", uvs);
+                    // }
+                    
+                    glVertex3f(
+                               shapes[shapeId].mesh.positions[3*vertexId], 
+                               shapes[shapeId].mesh.positions[3*vertexId+1], 
+                               shapes[shapeId].mesh.positions[3*vertexId+2]
+                               );
+                    
+                    glEnd();
+                }
+            }
+            
 
-            glBegin(GL_TRIANGLES);
+        
+        
+        
+		glDepthFunc (GL_LESS);									// Reset The Depth-Testing Mode ( NEW )
+        
+		glCullFace (GL_BACK);									// Reset The Face To Be Culled ( NEW )
+		glPolygonMode (GL_BACK, GL_FILL);						// Reset Back-Facing Polygon Drawing Mode ( NEW )
+		glDisable (GL_BLEND);
+        
 
-                /* Vertex 0. */
-                size_t vertexId = shapes[shapeId].mesh.indices[indexId];
-                // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                //     program.setVec2f("uvs", uvs);
-                // }
-                glNormal3f(
-                    shapes[shapeId].mesh.normals[3*vertexId], 
-                    shapes[shapeId].mesh.normals[3*vertexId+1], 
-                    shapes[shapeId].mesh.normals[3*vertexId+2]
-                );
-                glVertex3f(
-                    shapes[shapeId].mesh.positions[3*vertexId], 
-                    shapes[shapeId].mesh.positions[3*vertexId+1], 
-                    shapes[shapeId].mesh.positions[3*vertexId+2]
-                );
-
-                /* Vertex 1. */
-                vertexId = shapes[shapeId].mesh.indices[indexId+1];
-                // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                //     program.setVec2f("uvs", uvs);
-                // }
-                glNormal3f(
-                    shapes[shapeId].mesh.normals[3*vertexId], 
-                    shapes[shapeId].mesh.normals[3*vertexId+1], 
-                    shapes[shapeId].mesh.normals[3*vertexId+2]
-                );
-                glVertex3f(
-                    shapes[shapeId].mesh.positions[3*vertexId], 
-                    shapes[shapeId].mesh.positions[3*vertexId+1], 
-                    shapes[shapeId].mesh.positions[3*vertexId+2]
-                );
-
-                /* Vertex 2. */
-                vertexId = shapes[shapeId].mesh.indices[indexId+2];
-                // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                //     program.setVec2f("uvs", uvs);
-                // }
-                glNormal3f(
-                    shapes[shapeId].mesh.normals[3*vertexId], 
-                    shapes[shapeId].mesh.normals[3*vertexId+1], 
-                    shapes[shapeId].mesh.normals[3*vertexId+2]
-                );
-                glVertex3f(
-                    shapes[shapeId].mesh.positions[3*vertexId], 
-                    shapes[shapeId].mesh.positions[3*vertexId+1], 
-                    shapes[shapeId].mesh.positions[3*vertexId+2]
-                );
-
-            glEnd();
-        }
     }
-    if(outline){
-        glDepthFunc (GL_LESS);              // Reset The Depth-Testing Mode
-        
-        glCullFace (GL_BACK);               // Reset The Face To Be Culled
-        
-        glPolygonMode (GL_BACK, GL_FILL);       // Reset Back-Facing Polygon Drawing Mode
-        
-        glDisable (GL_BLEND);               // Disable Blending
-    }
-    else{
-        
-    }
-
     popGLMatrix(GL_MODELVIEW);
 }
 
