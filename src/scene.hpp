@@ -381,6 +381,7 @@ struct Scene {
     void addModel(ModelPtr object);
     void addLight(LightPtr light);
     void setEnvMap(CubeMapPtr envmap);
+    void setLights();
 };
 typedef shared_ptr<Scene> ScenePtr;
 

@@ -180,6 +180,8 @@ static const struct {
     { "Color Cycle",              "glsl/color_cycle.frag" },
     { "Anti-Diffuse",              "glsl/anti_diffuse.frag" },
     { "Gooch",            "glsl/gooch.frag" },
+    { "Facing-Ratio",            "glsl/facing.frag" },
+
     // { "Bump lit",            "glsl/06_bump_lit.frag" },
     // { "Reflection",          "glsl/07_reflection.frag" },
     // { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
@@ -205,7 +207,7 @@ static const struct {
     const char *name;
     const char *action;
 } extra_list[] = {
-    { "wireframe",   "outline" },
+    { "wireframe",   "outline" }
 };
 void extraMenu(int item)
 {
@@ -216,8 +218,10 @@ void extraMenu(int item)
     
     //scene->object_list[0]->fragment_filename = filename;
     //scene->object_list[0]->loadProgram();
+    if(strcmp(action,  extra_list[0].name)){
     scene->models->setOutline();
     scene->models->loadProgram();
+    }
     //material->bindTextures();
     glutPostRedisplay();
 }
