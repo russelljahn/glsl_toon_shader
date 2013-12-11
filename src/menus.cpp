@@ -178,7 +178,7 @@ static const struct {
     { "Sepia",               "glsl/sepia.frag" },
     { "Monochrome",          "glsl/monochrome.frag" },
     // { "Diffuse",             "glsl/diffuse.frag" },
-    { "Shadow",              "glsl/shadow.frag" },
+    { "Color Cycle",              "glsl/color_cycle.frag" },
     // { "Specular",            "glsl/specular.frag" },
     // { "Bump lit",            "glsl/06_bump_lit.frag" },
     // { "Reflection",          "glsl/07_reflection.frag" },
