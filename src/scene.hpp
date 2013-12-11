@@ -348,7 +348,7 @@ typedef shared_ptr<Torus> TorusPtr;
 class ModelObject : public Object {
 private:
     std::vector<tinyobj::shape_t> shapes;
-
+    bool outline;
 protected:
     
 public:
@@ -356,6 +356,7 @@ public:
 	~ModelObject();
     void loadProgram();
     void loadTexture();
+    void setOutline();
     void print();
     void draw(const View& view, LightPtr light);
 };

@@ -203,21 +203,21 @@ void shaderMenu(int item)
 }
 static const struct {
     const char *name;
-    const char *filename;
+    const char *action;
 } extra_list[] = {
-    { "Outline",   "glsl/phong.frag" },
+    { "Outline",   "outline" },
 };
 void extraMenu(int item)
 {
     assert(item < (int)countof(extra_list));
     
-    const char *filename = extra_list[item].filename;
+    const char * action = extra_list[item].action;
     printf("Switching to extra \"%s\"\n", extra_list[item].name);
     
     //scene->object_list[0]->fragment_filename = filename;
     //scene->object_list[0]->loadProgram();
-    //scene->models->fragment_filename = filename;
-    //scene->models->loadProgram();
+    scene->models->setOutline();
+    scene->models->loadProgram();
     //material->bindTextures();
     glutPostRedisplay();
 }

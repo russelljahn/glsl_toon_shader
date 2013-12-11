@@ -465,7 +465,14 @@ void Torus::draw(const View& view, LightPtr light) {
     popGLMatrix(GL_MODELVIEW);
 }
 
-
+void ModelObject::setOutline(){
+    if(outline){
+        outline = false;
+    }
+    else{
+        outline = true;
+    }
+}
 void ModelObject::loadProgram()
 {
     VertexShader vs;
@@ -507,6 +514,7 @@ void ModelObject::loadProgram()
 ModelObject::ModelObject(std::string filename, std::string basepath, Transform t, MaterialPtr m)
 : Object(t, m)
 {
+    outline = false;
     std::string err = tinyobj::LoadObj(shapes, filename.c_str(), basepath.c_str());
     
 
@@ -605,6 +613,32 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
 
+    
+    if(outline){
+        glCullFace (GL_BACK);
+//        glEnable (GL_CULL_FACE);
+//        glEnable (GL_DEPTH_TEST);
+//        glPointSize (4.f); // Make the points bigger
+//        glPolygonMode (GL_FRONT_AND_BACK, GL_POINT);
+//        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+//        glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+        glEnable (GL_BLEND);                // Enable Blending
+        // Set The Blend Mode
+        glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
+        
+        glPolygonMode (GL_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
+        glLineWidth (0.7);         // Set The Line Width
+        
+        glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
+        
+        glDepthFunc (GL_LEQUAL);            // Change The Depth Mode
+        
+        glColor3f (0.0,0.0,0.0);          // Set The Outline Color
+
+    }
+    else{
+    
+    }
 
     /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
@@ -675,7 +709,19 @@ void ModelObject::draw(const View& view, LightPtr light) {
             glEnd();
         }
     }
-   
+    if(outline){
+        glDepthFunc (GL_LESS);              // Reset The Depth-Testing Mode
+        
+        glCullFace (GL_BACK);               // Reset The Face To Be Culled
+        
+        glPolygonMode (GL_BACK, GL_FILL);       // Reset Back-Facing Polygon Drawing Mode
+        
+        glDisable (GL_BLEND);               // Disable Blending
+    }
+    else{
+        
+    }
+
     popGLMatrix(GL_MODELVIEW);
 }
 
