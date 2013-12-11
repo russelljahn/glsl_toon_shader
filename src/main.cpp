@@ -28,6 +28,8 @@ using boost::shared_ptr;
 #include <Cg/radians.hpp>
 #include <Cg/stdlib.hpp>
 
+#include <algorithm>
+
 #include "glmatrix.hpp"
 #include "scene.hpp"
 #include "texture.hpp"
@@ -86,6 +88,16 @@ float window_widthf, window_heightf;
 
 bool wireframe = false;
 
+
+double maxFramerate = 60.0;
+double timeUntilRefresh;
+
+clock_t clockStartProgram;
+double timePreviousFrame;
+double timeCurrentFrame;
+
+
+
 void initglext()
 {
     glewInit();  // Initialize OpenGL Extension Wrangler.
@@ -116,6 +128,12 @@ void initGraphics()
     glPixelStorei(GL_PACK_ALIGNMENT, 1);  // avoid GL's dumb default of 4
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);  // avoid GL's dumb default of 4
     glClearColor(0.1, 0.1, 0.2, 0.0);
+
+    /* Enable alpha blending. */
+    glEnable (GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    timeUntilRefresh = 1.0/maxFramerate;
 
     scene = ScenePtr(new Scene(Camera(40, 1, 0.1, 100),
                                View(eye_vector,
@@ -185,11 +203,25 @@ void doGraphics()
 #endif
 }
 
-void display()
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    doGraphics();
-    glutSwapBuffers();
+
+void display() {
+    timePreviousFrame = timeCurrentFrame;
+    timeCurrentFrame = ((float)clock() - clockStartProgram)/CLOCKS_PER_SEC;
+
+    // std::cout << "timePreviousFrame: " << timePreviousFrame << std::endl; 
+    // std::cout << "timeCurrentFrame: " << timeCurrentFrame << std::endl; 
+    // std::cout << "timeUntilRefresh: " << timeUntilRefresh << std::endl; 
+  
+    double deltaTime = timeCurrentFrame-timePreviousFrame;
+
+    timeUntilRefresh -= deltaTime;
+
+    if (timeUntilRefresh <= 0) {
+        timeUntilRefresh = 1.0/maxFramerate;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        doGraphics();
+        glutSwapBuffers();
+    }
 }
 
 void reshape(int w, int h)
@@ -369,6 +401,7 @@ int main(int argc, char **argv)
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
+    glutIdleFunc(display);
 
     initglext();
     initGraphics();

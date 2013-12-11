@@ -8,14 +8,14 @@ uniform vec2 uvs; // in
 uniform vec3 lightPosition; // Object-space
 uniform vec3 eyePosition; // Object-space
 
-uniform float timePreviousFrame; // in
-uniform float timeCurrentFrame; // in
-
 varying vec2 normalMapTexCoord; // out
 varying vec3 lightDirection; // out
 varying vec3 eyeDirection; // out
 varying vec3 normal; // out
 varying vec3 vertexInModelViewSpace; // out
+
+uniform float timePreviousFrame; // in
+uniform float timeCurrentFrame; // in
 
 uniform sampler2D normalMap;
 uniform sampler2D texture;
@@ -24,12 +24,13 @@ uniform samplerCube envmap;
 
 
 
-void main (void)
-{
-    vertexInModelViewSpace = vec3(gl_Vertex);
-    normal = normalize(gl_Normal);
+void main() {
 
-    lightDirection = normalize(lightPosition - vertexInModelViewSpace);
-    eyeDirection = normalize(eyePosition - vertexInModelViewSpace);
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	float diffuse = dot(lightDirection, normal);
+
+	float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
+	float specular = pow(amountLightToEye, shininess);
+
+	vec4 phong = clamp(LMa + LMd*diffuse + specular*LMs, 0.0, 1.0);
+	gl_FragColor = vec4(1.0 - phong.r, 1.0 - phong.g, 1.0 - phong.b, phong.a);
 }

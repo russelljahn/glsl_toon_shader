@@ -16,6 +16,13 @@ extern CubeMapPtr envmap;
 
 extern float bump_height;
 
+extern double maxFramerate;
+extern double timeUntilRefresh;
+
+extern clock_t clockStartProgram;
+extern double timePreviousFrame;
+extern double timeCurrentFrame;
+
 void stopObjectSpinning();
 void toggleWireframe();
 

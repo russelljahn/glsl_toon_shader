@@ -15,6 +15,8 @@
 #include <vector>
 using std::vector;
 
+#include <ctime>
+
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
@@ -32,6 +34,7 @@ using boost::shared_ptr;
 #include <Cg/stdlib.hpp>
 #include <Cg/iostream.hpp>
 
+#include "global.hpp"
 #include "scene.hpp"
 #include "glmatrix.hpp"
 #include "matrix_stack.hpp"
@@ -515,13 +518,11 @@ ModelObject::ModelObject(std::string filename, std::string basepath, Transform t
     print();
     
     
-    //obj = new cObj(filename);
-    
     vertex_filename = "glsl/model.vert";
     fragment_filename = "glsl/phong.frag";
     
-    //mesh2d = Mesh2DPtr(new Mesh2D(float2(0,0), float2(1,1), int2(80,40)));
-    
+    clockStartProgram = clock();
+
     // loadTexture();
     loadProgram();
     
@@ -586,7 +587,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     // LM = Light color modulated by Matrial color
     // a,d,s = ambient, diffuse, specular
-
     float4 LMa = material->ambient*light->getColor();
     program.setVec4f("LMa", LMa);
     float4 LMd = material->diffuse*light->getColor();
@@ -597,11 +597,14 @@ void ModelObject::draw(const View& view, LightPtr light) {
     
     program.setMat3f("objectToWorld", transform);
 
+
+    // Send current frame time and previous frame time to gfx card.
+    program.setVec1f("timePreviousFrame", timePreviousFrame );
+    program.setVec1f("timeCurrentFrame", timeCurrentFrame );
+
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
-    // mesh2d->draw();
-    
-    
+
 
     /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {

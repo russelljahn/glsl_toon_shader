@@ -173,16 +173,18 @@ static const struct {
     const char *name;
     const char *filename;
 } shader_list[] = {
-    { "Phong, No Texture",   "glsl/phong.frag" },
-    { "Decal",               "glsl/texture.frag" },
-    { "Diffuse",             "glsl/diffuse.frag" },
-    { "Bumpy diffuse",       "glsl/03_bump_diffuse.frag" },
-    { "Specular",            "glsl/specular.frag" },
-    { "Bump lit",            "glsl/06_bump_lit.frag" },
-    { "Reflection",          "glsl/07_reflection.frag" },
-    { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
+    { "Flat Lighting",   "glsl/phong.frag" },
+    { "Negative",            "glsl/negative.frag" },
+    { "Sepia",               "glsl/sepia.frag" },
+    { "Monochrome",          "glsl/monochrome.frag" },
+    // { "Diffuse",             "glsl/diffuse.frag" },
+    { "Shadow",              "glsl/shadow.frag" },
+    // { "Specular",            "glsl/specular.frag" },
+    // { "Bump lit",            "glsl/06_bump_lit.frag" },
+    // { "Reflection",          "glsl/07_reflection.frag" },
+    // { "Bumpy reflection",    "glsl/08_bump_reflection.frag" },
     { "Toon Simple",         "glsl/toon_simple.frag" },
-    { "Toon",                "glsl/10_toon.frag" }
+    // { "Toon",                "glsl/10_toon.frag" }
 };
 
 void shaderMenu(int item)

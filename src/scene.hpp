@@ -348,6 +348,7 @@ typedef shared_ptr<Torus> TorusPtr;
 class ModelObject : public Object {
 private:
     std::vector<tinyobj::shape_t> shapes;
+
 protected:
     
 public:
