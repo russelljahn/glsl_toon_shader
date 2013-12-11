@@ -609,22 +609,22 @@ void ModelObject::draw(const View& view, LightPtr light) {
     /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
 
-        assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
+        // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
 
         /* For every triangle face in the mesh... */
         for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
             
-            float2 uvs;
+            // float2 uvs;
 
             glBegin(GL_TRIANGLES);
 
                 /* Vertex 0. */
                 size_t vertexId = shapes[shapeId].mesh.indices[indexId];
-                if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    program.setVec2f("uvs", uvs);
-                }
+                // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                //     program.setVec2f("uvs", uvs);
+                // }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 
@@ -638,11 +638,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
                 /* Vertex 1. */
                 vertexId = shapes[shapeId].mesh.indices[indexId+1];
-                if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    program.setVec2f("uvs", uvs);
-                }
+                // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                //     program.setVec2f("uvs", uvs);
+                // }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 
@@ -656,11 +656,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
                 /* Vertex 2. */
                 vertexId = shapes[shapeId].mesh.indices[indexId+2];
-                if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    program.setVec2f("uvs", uvs);
-                }
+                // if (!shapes[shapeId].mesh.texcoords.empty()) {
+                //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+                //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+                //     program.setVec2f("uvs", uvs);
+                // }
                 glNormal3f(
                     shapes[shapeId].mesh.normals[3*vertexId], 
                     shapes[shapeId].mesh.normals[3*vertexId+1], 

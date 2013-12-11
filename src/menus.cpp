@@ -201,6 +201,26 @@ void shaderMenu(int item)
     material->bindTextures();
     glutPostRedisplay();
 }
+static const struct {
+    const char *name;
+    const char *filename;
+} extra_list[] = {
+    { "Outline",   "glsl/phong.frag" },
+};
+void extraMenu(int item)
+{
+    assert(item < (int)countof(extra_list));
+    
+    const char *filename = extra_list[item].filename;
+    printf("Switching to extra \"%s\"\n", extra_list[item].name);
+    
+    //scene->object_list[0]->fragment_filename = filename;
+    //scene->object_list[0]->loadProgram();
+    //scene->models->fragment_filename = filename;
+    //scene->models->loadProgram();
+    //material->bindTextures();
+    glutPostRedisplay();
+}
 
 enum {
     MO_STOP_ANIMATION,
@@ -248,6 +268,10 @@ void initMenus()
     for (size_t i=0; i<countof(shader_list); i++) {
         glutAddMenuEntry(shader_list[i].name, i);
     }
+    int extra_menu = glutCreateMenu(extraMenu);
+    for (size_t i=0; i<countof(extra_list); i++) {
+        glutAddMenuEntry(extra_list[i].name, i);
+    }
     glutCreateMenu(menu);
     // glutAddSubMenu("Decal texture...", texture_menu);
     // glutAddSubMenu("Bump texture...", bumpy_menu);
@@ -255,6 +279,7 @@ void initMenus()
     glutAddSubMenu("Environments...", envmap_menu);
     glutAddSubMenu("Light color...", light_menu);
     glutAddSubMenu("Shader...", shader_menu);
+    glutAddSubMenu("Extras...", extra_menu);
     glutAddMenuEntry("Stop animation", MO_STOP_ANIMATION);
     glutAddMenuEntry("Quit", MO_QUIT);
     glutAttachMenu(GLUT_RIGHT_BUTTON);

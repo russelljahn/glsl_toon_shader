@@ -12,7 +12,7 @@ void textureMenu(int item);
 void materialMenu(int item);
 void lightMenu(int item);
 void shaderMenu(int item);
-
+void extraMenu(int item);
 void initMenus();
 
 #endif // __menus_hpp__
