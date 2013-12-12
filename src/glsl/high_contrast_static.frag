@@ -95,18 +95,20 @@ float snoise(vec2 v)
 
 void main() {
 
-	vec4 noiseColor = vec4(
-    rand(vec2(eyeDirection.x, normal.x)),
-    rand(vec2(eyeDirection.y, normal.y)), 
-		rand(vec2(eyeDirection.z, normal.z)),
-    1.0
-  );
+	vec4 noiseColor = vec4(1) * (
+    rand(vec2(eyeDirection.x, speed1*timePreviousFrame)) +
+    rand(vec2(eyeDirection.y, speed1*timePreviousFrame)) + 
+		rand(vec2(eyeDirection.z, speed1*timePreviousFrame))
+		) / 3.0;
 
-  float diffuse = dot(lightDirection, normal);
+    float diffuse = dot(lightDirection, normal);
 
   float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
   float specular = pow(amountLightToEye, shininess);
 
-  gl_FragColor = clamp(LMa + 0.8*LMd*diffuse + specular*LMs + 0.35*noiseColor, 0.0, 1.0);
+  gl_FragColor = clamp(LMa + 0.8*LMd*diffuse + specular*LMs + 0.7*noiseColor, 0.0, 1.0);
+  gl_FragColor.a = 0.75;
 
+    /* Contrast. */
+  gl_FragColor.rgb = ((gl_FragColor.rgb - 0.5) * 50.0) + 0.5;
 }

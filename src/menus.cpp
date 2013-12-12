@@ -229,10 +229,12 @@ static const struct {
     { "Toon Simple 2",           "glsl/toon_simple_glossy.frag" },
     { "Gooch",                   "glsl/gooch.frag" },
     { "Graphic",                 "glsl/graphic.frag" },
-    { "Psychadelic",             "glsl/anti_diffuse.frag" },
+    { "Psychadelic",             "glsl/psychadelic.frag" },
+    { "Stencilize",              "glsl/stencilize.frag" },
     { "God Ray",                 "glsl/gods_ray.frag"},
     { "Ice",                     "glsl/ice.frag" },
-    { "Noise",                   "glsl/noise_texture.frag" }, 
+    { "Noise Texture",           "glsl/noise_texture.frag" }, 
+    { "High Contrast Static",    "glsl/high_contrast_static.frag" }, 
 };
 
 void shaderMenu(int item)
