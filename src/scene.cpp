@@ -473,6 +473,69 @@ void ModelObject::setOutline(){
         outline = true;
     }
 }
+void ModelObject::setGodsRay(){
+    godsRay = false;
+}
+void ModelObject::loadGodsRay(){
+    program.reset();
+    godsRay = true;
+    VertexShader vs_lighting;
+    FragmentShader fs_lighting;
+
+    string vertex_f = "glsl/lighting.vert";
+    string frag_f = "glsl/lighting.frag";
+
+    bool vs_ok = vs_lighting.readTextFile(vertex_f.c_str());
+    bool fs_ok = fs_lighting.readTextFile(frag_f.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs_lighting.getShader(), fs_lighting.getShader());
+        vs_lighting.release();
+        fs_lighting.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            lighting.swap(new_program);
+            lighting.use();
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+
+    VertexShader vs_ray;
+    FragmentShader fs_ray;
+
+    vertex_f = "glsl/gods_ray.vert";
+    frag_f = "glsl/gods_ray.frag";
+
+    vs_ok = vs_ray.readTextFile(vertex_f.c_str());
+    fs_ok = fs_ray.readTextFile(frag_f.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs_ray.getShader(), fs_ray.getShader());
+        vs_ray.release();
+        fs_ray.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            rays.swap(new_program);
+            rays.use();
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+}
+
 void ModelObject::loadProgram()
 {
     VertexShader vs;
@@ -583,9 +646,116 @@ void ModelObject::print() {
 }
 
 void ModelObject::draw(const View& view, LightPtr light) {
+
+
+    if(godsRay){
+        //printf("HERER\n" );
+        bool WireFrame = true;
+        pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // 
+
+        // /glEnable(GL_DEPTH_TEST);
+
+        // if(WireFrame)
+        // {
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        // }
+
+        lighting.use();
+/* For every shape... */
+    for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
+        
+        // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
+        
+        /* For every triangle face in the mesh... */
+        for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
+            
+            // float2 uvs;
+            
+            glBegin(GL_TRIANGLES);
+            
+            /* Vertex 0. */
+            size_t vertexId = shapes[shapeId].mesh.indices[indexId];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            /* Vertex 1. */
+            vertexId = shapes[shapeId].mesh.indices[indexId+1];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            /* Vertex 2. */
+            vertexId = shapes[shapeId].mesh.indices[indexId+2];
+            // if (!shapes[shapeId].mesh.texcoords.empty()) {
+            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
+            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
+            //     program.setVec2f("uvs", uvs);
+            // }
+            if (shapes[shapeId].mesh.normals.size() > 0) {
+                glNormal3f(
+                           shapes[shapeId].mesh.normals[3*vertexId],
+                           shapes[shapeId].mesh.normals[3*vertexId+1],
+                           shapes[shapeId].mesh.normals[3*vertexId+2]
+                           );
+            }
+
+            glVertex3f(
+                       shapes[shapeId].mesh.positions[3*vertexId],
+                       shapes[shapeId].mesh.positions[3*vertexId+1],
+                       shapes[shapeId].mesh.positions[3*vertexId+2]
+                       );
+            
+            glEnd();
+        }
+    }
+
+
+        glUseProgram(0);
+
+        // if(WireFrame)
+        // {
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        // }
+        // 
+
+        glEnable(GL_DEPTH_TEST);
+        popGLMatrix(GL_MODELVIEW);
+    }
+    else{
     program.use();
-    
-    
     float4 eye_position_object_space = mul(transform.getInverseMatrix(), float4(view.eye_position,1));
     eye_position_object_space.xyz /= eye_position_object_space.w;
     program.setVec3f("eyePosition", eye_position_object_space.xyz);
@@ -694,14 +864,15 @@ void ModelObject::draw(const View& view, LightPtr light) {
     }
     }
     else{
-        
+        glPushMatrix();
         float       outlineColor[3] = { 255.0f, 255.0f, 255.0f };
+
         glEnable (GL_BLEND);                // Enable Blending
-        
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Set The Blend Mode
         glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
         
-        glPolygonMode (GL_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
+        glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
         glLineWidth (0.3);         // Set The Line Width
         
         glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
@@ -723,7 +894,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     
                     // float2 uvs;
                     
-                    glBegin(GL_LINES);
+                    glBegin(GL_TRIANGLES);
                     
                     /* Vertex 0. */
                     size_t vertexId = shapes[shapeId].mesh.indices[indexId];
@@ -773,13 +944,15 @@ void ModelObject::draw(const View& view, LightPtr light) {
         
 		glDepthFunc (GL_LESS);									// Reset The Depth-Testing Mode ( NEW )
         
-		glCullFace (GL_BACK);									// Reset The Face To Be Culled ( NEW )
-		glPolygonMode (GL_BACK, GL_FILL);						// Reset Back-Facing Polygon Drawing Mode ( NEW )
+		glCullFace (GL_FRONT);									// Reset The Face To Be Culled ( NEW )
+		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);						// Reset Back-Facing Polygon Drawing Mode ( NEW )
 		glDisable (GL_BLEND);
         
 
     }
-    popGLMatrix(GL_MODELVIEW);
+   glPopMatrix();
+
+    }
 }
 
 

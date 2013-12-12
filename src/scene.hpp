@@ -311,6 +311,10 @@ struct Object {
     string vertex_filename;
     string fragment_filename;
     GLSLProgram program;
+    GLSLProgram rays;
+    GLSLProgram lighting;
+
+
 
     Transform transform;
     MaterialPtr material;
@@ -349,6 +353,7 @@ class ModelObject : public Object {
 private:
     std::vector<tinyobj::shape_t> shapes;
     bool outline;
+    bool godsRay;
     const std::string filename;
     const std::string folderpath;
 protected:
@@ -358,6 +363,8 @@ public:
 	~ModelObject();
     void loadProgram();
     void loadTexture();
+    void setGodsRay();
+    void loadGodsRay();
     void setOutline();
     void print();
     void draw(const View& view, LightPtr light);
