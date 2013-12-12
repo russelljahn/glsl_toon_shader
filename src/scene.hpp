@@ -381,13 +381,13 @@ struct Scene {
     vector<LightPtr> light_list;
     vector<ObjectPtr> object_list;
     CubeMapPtr envmap;
-    ModelPtr models;
+    ModelObject *models;
     Scene(const Camera& c, const View& v);
     void setView(const View& v);
     void setCamera(const Camera& c);
     void draw();
     void addObject(ObjectPtr object);
-    void changeModel(ModelPtr object);
+    void changeModel(std::string file_name, std::string folder_path);
     void addLight(LightPtr light);
     void setEnvMap(CubeMapPtr envmap);
     void setLights();
