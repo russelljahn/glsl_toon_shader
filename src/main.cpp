@@ -147,6 +147,7 @@ void initGraphics()
     // bumpyMenu(0);
     // textureMenu(0);
     envMapMenu(0);
+    shaderMenu(0);
 
     light = LightPtr(new Light());
     light->setCenter(float3(0,0,0));
