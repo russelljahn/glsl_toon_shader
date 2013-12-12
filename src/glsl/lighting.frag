@@ -29,23 +29,12 @@ void main()
     vec3 N = normalize(normal);
     vec3 L = normalize(lightDirection);
     vec3 E = normalize(c);
-    vec3 H = normalize(L + E);
+    
 
-    vec3 Warm = vec3(0.6 ,0.6 ,0);
-    vec3 Cool = vec3(0, 0 ,0.6);
-    float Outline = 0.4;
-    
-    float diffuse = dot(L,N);
-    float specular = pow(dot(N,H),32.0);
-    
-    vec3 cool = min(Cool.xyz+LMd.xyz,1.0);
-    vec3 warm = min(Warm.xyz+LMd.xyz,1.0);
-    
-    vec4 Color = vec4( min(mix(cool,warm,diffuse)+specular,1.0), 1.0);
-    
-    if (dot(N,E)<Outline) {
-        Color = vec4(0.0,0.0,0.0,1.0);
-    }
+    float temp1 = max(dot(N, E), 0.0);
+    float temp2 = pow(max(dot(E, L),0.0),32.0);
 
-    gl_FragColor = Color;
+    vec4 color = vec4(vec3(vec3(255.0,255.0,255.0)*temp1 + temp2), 1.0);
+
+    gl_FragColor = color;
 }

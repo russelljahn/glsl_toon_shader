@@ -649,18 +649,39 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
 
     if(godsRay){
+
         //printf("HERER\n" );
-        bool WireFrame = true;
+        bool WireFrame = false;
+        bool blur = true;
+
+// generate textures ------------------------------------------------------------------------------------------------------
+
+    glGenTextures(1, &ColorBuffer);
+    glGenTextures(1, &DepthBuffer);
+
+    // generate FBO -----------------------------------------------------------------------------------------------------------
+
+    glGenFramebuffersEXT(1, &FBO);
+
+    if(blur)
+    {
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FBO);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, ColorBuffer, 0);
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D, DepthBuffer, 0);
+    }
+
+
+
         pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // 
 
-        // /glEnable(GL_DEPTH_TEST);
 
-        // if(WireFrame)
-        // {
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        // }
+        if(WireFrame)
+        {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        glEnable(GL_DEPTH_TEST);
 
         lighting.use();
 /* For every shape... */
@@ -745,13 +766,35 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
         glUseProgram(0);
 
-        // if(WireFrame)
-        // {
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        // }
-        // 
+        if(WireFrame)
+        {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+        
 
-        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
+
+    if(blur)
+    {
+        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+
+        glBindTexture(GL_TEXTURE_2D, ColorBuffer);
+
+        rays.use();
+
+        glBegin(GL_QUADS);
+            glVertex2f(0.0f, 0.0f);
+            glVertex2f(1.0f, 0.0f);
+            glVertex2f(1.0f, 1.0f);
+            glVertex2f(0.0f, 1.0f);
+        glEnd();
+
+        glUseProgram(0);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+
         popGLMatrix(GL_MODELVIEW);
     }
     else{

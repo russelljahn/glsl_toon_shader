@@ -313,7 +313,7 @@ struct Object {
     GLSLProgram program;
     GLSLProgram rays;
     GLSLProgram lighting;
-
+    GLuint ColorBuffer, DepthBuffer, FBO;
 
 
     Transform transform;
