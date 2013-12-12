@@ -45,12 +45,10 @@ void modelMenu(int item)
         std::string(model_list[item].pathToFolder)
     );
 
-    std::cout << "file_name: " << file_name << std::endl;
-    std::cout << "folder_path: " << folder_path << std::endl;
+    // std::cout << "file_name: " << file_name << std::endl;
+    // std::cout << "folder_path: " << folder_path << std::endl;
     
-
-    ModelPtr model = ModelPtr(new ModelObject(file_name, folder_path, Transform(), material));
-    scene->changeModel(model);
+    scene->changeModel(file_name, folder_path);
 
     glutPostRedisplay();
 }

@@ -1121,9 +1121,13 @@ void Scene::draw()
         envmap->draw(10);
     }
 }
-void Scene::changeModel(ModelPtr object)
+void Scene::changeModel(std::string file_name, std::string folder_path)
 {
-    models = object;
+
+    if (models != NULL) {
+        delete models;
+    }
+    models = new ModelObject(file_name, folder_path, Transform(), material);
 }
 void Scene::addObject(ObjectPtr object)
 {
