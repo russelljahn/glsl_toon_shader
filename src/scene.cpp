@@ -1296,7 +1296,7 @@ void Scene::draw()
 }
 void Scene::changeModel(std::string file_name, std::string folder_path)
 {
-
+    /* Only call delete if models points to something. */
     if (loadedModelAlready) {
         delete models;
     }
