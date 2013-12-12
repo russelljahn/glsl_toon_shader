@@ -225,6 +225,7 @@ static const struct {
     { "Toon Simple 1",             "glsl/toon_simple.frag" },
     { "Toon Simple 2",           "glsl/toon_simple_glossy.frag" },
     { "Gooch",                   "glsl/gooch.frag" },
+    {"Gods Ray",               "glsl/gods_ray.frag"}
 };
 
 void shaderMenu(int item)
@@ -233,9 +234,14 @@ void shaderMenu(int item)
 
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
-
-    scene->models->fragment_filename = filename;
-    scene->models->loadProgram();
+    scene->models->setGodsRay();
+    if(strcmp(shader_list[item].name,shader_list[12].name )==0){
+        scene->models->loadGodsRay();
+    }
+    else{
+        scene->models->fragment_filename = filename;
+        scene->models->loadProgram();
+    }
     material->bindTextures();
     glutPostRedisplay();
 }
