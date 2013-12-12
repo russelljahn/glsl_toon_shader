@@ -225,13 +225,14 @@ static const struct {
     { "Color Cycle",             "glsl/color_cycle.frag" },
     { "Rainbow Neon",            "glsl/rainbow_neon.frag" },
     { "Stripes & Spirals",       "glsl/stripes_spirals.frag" }, 
-    // { "Noise",                   "glsl/noise.frag" }, 
     { "Toon Simple 1",           "glsl/toon_simple.frag" },
     { "Toon Simple 2",           "glsl/toon_simple_glossy.frag" },
     { "Gooch",                   "glsl/gooch.frag" },
+    { "Graphic",                 "glsl/graphic.frag" },
     { "Psychadelic",             "glsl/anti_diffuse.frag" },
     { "God Ray",                 "glsl/gods_ray.frag"},
     { "Ice",                     "glsl/ice.frag" },
+    { "Noise",                   "glsl/noise_texture.frag" }, 
 };
 
 void shaderMenu(int item)

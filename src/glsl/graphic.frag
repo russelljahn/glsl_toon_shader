@@ -98,14 +98,9 @@ void main() {
 				speed1*timePreviousFrame*snoise(vec2(eyeDirection.y, normal.x)), 
 				speed1*timePreviousFrame*snoise(vec2(eyeDirection.z, normal.y))
 			),
-			snoise(normal.xz)
+			1.0
 		);
 
-    float diffuse = dot(lightDirection, normal);
-
-  float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
-  float specular = pow(amountLightToEye, shininess);
-
-  gl_FragColor = clamp(LMa + LMd*diffuse + specular*LMs + 0.25*noiseColor, 0.0, 1.0);
+  gl_FragColor = clamp(vec4(1.2, 1.2, 1.2, 1.0) + 0.25*noiseColor, 0.0, 1.0);
 
 }
