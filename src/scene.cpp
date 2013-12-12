@@ -1124,9 +1124,10 @@ void Scene::draw()
 void Scene::changeModel(std::string file_name, std::string folder_path)
 {
 
-    if (models != NULL) {
+    if (loadedModelAlready) {
         delete models;
     }
+    loadedModelAlready = true;
     models = new ModelObject(file_name, folder_path, Transform(), material);
 }
 void Scene::addObject(ObjectPtr object)

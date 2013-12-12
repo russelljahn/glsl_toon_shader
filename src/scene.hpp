@@ -375,6 +375,8 @@ struct Scene {
     vector<ObjectPtr> object_list;
     CubeMapPtr envmap;
     ModelObject *models;
+    bool loadedModelAlready = false;
+
     Scene(const Camera& c, const View& v);
     void setView(const View& v);
     void setCamera(const Camera& c);
