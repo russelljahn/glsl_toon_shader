@@ -67,7 +67,7 @@ float snoise(vec2 v)
 // Permutations
   i = mod289(i); // Avoid truncation effects in permutation
   vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
-		+ i.x + vec3(0.0, i1.x, 1.0 ));
+    + i.x + vec3(0.0, i1.x, 1.0 ));
 
   vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
   m = m*m ;
@@ -95,18 +95,25 @@ float snoise(vec2 v)
 
 void main() {
 
-	vec4 noiseColor = vec4(
-    rand(vec2(eyeDirection.x, normal.x)),
-    rand(vec2(eyeDirection.y, normal.y)), 
-		rand(vec2(eyeDirection.z, normal.z)),
-    1.0
-  );
+  vec4 noiseColor = vec4(1) * (
+    rand(vec2(eyeDirection.x, normal.x)) +
+    rand(vec2(eyeDirection.y, normal.y)) + 
+    rand(vec2(eyeDirection.z, normal.z))
+    ) / 3.0;
 
   float diffuse = dot(lightDirection, normal);
 
   float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
   float specular = pow(amountLightToEye, shininess);
-
-  gl_FragColor = clamp(LMa + 0.8*LMd*diffuse + specular*LMs + 0.35*noiseColor, 0.0, 1.0);
+  float grittySpecular;
   
+  if (diffuse > 0.85) {
+    grittySpecular = 0.75*rand(vec2(specular, specular));
+  }
+
+  gl_FragColor = clamp(LMa + 0.8*LMd*diffuse + grittySpecular*LMs + 0.35*noiseColor, 0.0, 1.0);
+  
+  /* Contrast. */
+  gl_FragColor.rgb = ((gl_FragColor.rgb - 0.5) * 50.0) + 0.5;
+  gl_FragColor.a = 1.0;
 }

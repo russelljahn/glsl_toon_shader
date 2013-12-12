@@ -233,8 +233,10 @@ static const struct {
     { "Stencilize",              "glsl/stencilize.frag" },
     { "God Ray",                 "glsl/gods_ray.frag"},
     { "Ice",                     "glsl/ice.frag" },
-    { "Noise Texture",           "glsl/noise_texture.frag" }, 
+    { "Noise Texture",           "glsl/noise_texture.frag" },
+    { "Gritty Texture",          "glsl/gritty_texture.frag" },  
     { "High Contrast Static",    "glsl/high_contrast_static.frag" }, 
+
 };
 
 void shaderMenu(int item)
