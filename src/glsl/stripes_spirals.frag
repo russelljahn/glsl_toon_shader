@@ -92,13 +92,13 @@ void main() {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
     }
     else {
-	    vec4 noise = vec4(gl_FragCoord.w, gl_FragCoord.w, gl_FragCoord.w, 1.0);
+	    // vec4 noise = vec4(gl_FragCoord.w, gl_FragCoord.w, gl_FragCoord.w, 1.0);
 
 	    float diffuse = dot(lightDirection, normal);
 
-		float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
-		float specular = pow(amountLightToEye, shininess);
+      float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
+      float specular = pow(amountLightToEye, shininess);
 
-		gl_FragColor = clamp(LMa + LMd*diffuse + specular*LMs, 0.0, 1.0);
+      gl_FragColor = clamp(LMa + LMd*diffuse + specular*LMs, 0.0, 1.0);
 	}
 }

@@ -20,7 +20,8 @@ static const struct {
     const char *pathToFolder; // From media folder
     const char *filename;
 } model_list[] = {
-    { "Cubey",       "cube/",          "cube.obj" },
+    // { "Cubey",       "cube/",          "cube.obj" },
+    { "Dragon",      "dragon_smooth/", "dragon_smooth.obj" },
     { "Statue",      "statue/",        "statue.obj" },
     { "Mario",       "mario/",         "mario.obj" },
     { "Giant Robot", "giant_robot/",   "giant_robot.obj" },
@@ -29,7 +30,6 @@ static const struct {
     { "Shark",       "shark/",         "shark.obj" },
     // { "Buddha",      "buddha/",        "buddha.obj" }, // Maybe add back in if model loading gets WAYYYY faster.
     { "Monkey",      "monkey/",        "monkey.obj" },
-    { "Dragon",      "dragon_smooth/", "dragon_smooth.obj" },
     { "Bunny",       "bunny/",         "bunny.obj" },
 };
 
@@ -214,18 +214,30 @@ static const struct {
     const char *filename;
 } shader_list[] = {
     { "Flat Lighting",           "glsl/phong.frag" },
+    { "Reflection",              "glsl/reflection.frag" },
     { "Negative",                "glsl/negative.frag" },
     { "Sepia",                   "glsl/sepia.frag" },
     { "Monochrome",              "glsl/monochrome.frag" },
-    { "Color Cycle",             "glsl/color_cycle.frag" },
-    { "Noise Stripes & Spirals", "glsl/noise_stripes_spirals.frag" },
-    { "Anti-Diffuse",            "glsl/anti_diffuse.frag" },
+    { "Prismatic",               "glsl/prismatic.frag" },
+    { "Spectral",                "glsl/spectral.frag" },
     { "Normals",                 "glsl/normals.frag" },
     { "Facing-Ratio",            "glsl/facing.frag" },
-    { "Toon Simple 1",             "glsl/toon_simple.frag" },
+    { "Color Cycle",             "glsl/color_cycle.frag" },
+    { "Rainbow Neon",            "glsl/rainbow_neon.frag" },
+    { "Stripes & Spirals",       "glsl/stripes_spirals.frag" }, 
+    { "Toon Simple 1",           "glsl/toon_simple.frag" },
     { "Toon Simple 2",           "glsl/toon_simple_glossy.frag" },
     { "Gooch",                   "glsl/gooch.frag" },
-    {"Gods Ray",               "glsl/gods_ray.frag"}
+    { "Graphic",                 "glsl/graphic.frag" },
+    { "Psychadelic",             "glsl/psychadelic.frag" },
+    { "Stencilize",              "glsl/stencilize.frag" },
+    { "God Ray",                 "glsl/gods_ray.frag"},
+    { "Ice",                     "glsl/ice.frag" },
+    { "Noise Texture",           "glsl/noise_texture.frag" },
+    { "Gritty Texture",          "glsl/gritty_texture.frag" },  
+    { "High Contrast Static",    "glsl/high_contrast_static.frag" }, 
+    { "Edge Detection",        "glsl/edge.frag"}
+
 };
 
 void shaderMenu(int item)
@@ -235,7 +247,7 @@ void shaderMenu(int item)
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
     scene->models->setGodsRay();
-    if(strcmp(shader_list[item].name,shader_list[12].name )==0){
+    if(strcmp(shader_list[item].name,"God Ray")==0){
         scene->models->loadGodsRay();
     }
     else{

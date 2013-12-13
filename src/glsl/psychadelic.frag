@@ -101,7 +101,7 @@ void main() {
 	float amountLightToEye = dot(reflect(lightDirection, normal), eyeDirection);
 	vec4 specular = pow(amountLightToEye, shininess)*LMs;
 
-	if (diffuse > 0.75) {
+	if (diffuse > 0.75 || diffuse < -0.75) {
 		gl_FragColor = vec4(0.2+specular.x, 0.0, 0.4+specular.z, 0.5);
 	}
 	else {

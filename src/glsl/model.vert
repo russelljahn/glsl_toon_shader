@@ -17,6 +17,8 @@ varying vec3 eyeDirection; // out
 varying vec3 normal; // out
 varying vec3 vertexInModelViewSpace; // out
 varying vec3 c ;
+uniform vec2 tex_in;
+
 
 uniform sampler2D normalMap;
 uniform sampler2D texture;
@@ -28,6 +30,8 @@ uniform samplerCube envmap;
 
 void main (void)
 {
+
+    gl_TexCoord[0] = gl_MultiTexCoord0;
     vertexInModelViewSpace = vec3(gl_Vertex);
     normal = normalize(gl_Normal);
 
