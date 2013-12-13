@@ -25,7 +25,13 @@ void main()
 { 
     vec4 outer = LMd*0.25;
     vec4 inner = LMd*0.75;
-    float ratio = dot(normalize(c),normalize(normal));
-    clamp(ratio,0.0,1.0);
-    gl_FragColor = mix(outer,inner,ratio);
+   
+    float angleToCamera = normalize(dot(normal, eyeDirection));
+
+	if (angleToCamera >= 0.0) {
+		gl_FragColor = outer;
+	}
+	else {
+		gl_FragColor = inner;
+	}
 }

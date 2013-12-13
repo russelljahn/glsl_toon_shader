@@ -107,4 +107,5 @@ void main() {
 	float specular = pow(amountLightToEye, shininess);
 
 	gl_FragColor = specular*LMs + diffuse*LMd + 0.25*noiseColor;
+  gl_FragColor.a = 1.0;
 }
