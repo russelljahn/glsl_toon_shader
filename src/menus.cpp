@@ -29,6 +29,7 @@ static const struct {
     { "Skull",       "skull/",         "skull.obj" },
     { "Shark",       "shark/",         "shark.obj" },
     // { "Buddha",      "buddha/",        "buddha.obj" }, // Maybe add back in if model loading gets WAYYYY faster.
+    {"Capsule",       "capsule/",          "capsule.obj"},
     { "Monkey",      "monkey/",        "monkey.obj" },
     { "Bunny",       "bunny/",         "bunny.obj" },
 };
@@ -36,7 +37,7 @@ static const struct {
 void modelMenu(int item)
 {
     assert(item < (int)countof(model_list));
-
+    
     const std::string pathToMediaFolder = "../media/";
     const std::string file_name = std::string(model_list[item].filename);
 
@@ -49,7 +50,7 @@ void modelMenu(int item)
     // std::cout << "folder_path: " << folder_path << std::endl;
     
     scene->changeModel(file_name, folder_path);
-
+    scene->models->setExplosion(false);
     glutPostRedisplay();
 }
 
@@ -236,7 +237,7 @@ static const struct {
     { "Noise Texture",           "glsl/noise_texture.frag" },
     { "Gritty Texture",          "glsl/gritty_texture.frag" },  
     { "High Contrast Static",    "glsl/high_contrast_static.frag" }, 
-    { "Edge Detection",        "glsl/edge.frag"}
+    { "Texture",        "glsl/texture.frag"}
 
 };
 
@@ -247,6 +248,7 @@ void shaderMenu(int item)
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
     scene->models->setGodsRay();
+    scene->models->setExplosion(false);
     if(strcmp(shader_list[item].name,"God Ray")==0){
         scene->models->loadGodsRay();
     }
@@ -261,8 +263,11 @@ static const struct {
     const char *name;
     const char *action;
 } extra_list[] = {
-    { "Toggle Wireframe",   "outline" }
+    { "Toggle Wireframe",   "outline" },
+    {"Black Hole", "Black Hole"}
 };
+
+
 
 void extraMenu(int item)
 {
@@ -270,12 +275,16 @@ void extraMenu(int item)
     
     const char * action = extra_list[item].action;
     printf("Switching to extra \"%s\"\n", extra_list[item].name);
-    
-    if(strcmp(action,  extra_list[0].name)){
+    scene->models->setExplosion(false);
+
+    if(item == 0){
         scene->models->setOutline();
         scene->models->loadProgram();
     }
-
+    else if(item == 1){
+        scene->models->setExplosion(true);
+        scene->models->loadExplosionProgram();
+    }
     glutPostRedisplay();
 }
 

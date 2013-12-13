@@ -141,9 +141,12 @@ void initGraphics()
                                     up_vector))); 
 
     material = MaterialPtr(new Material());
+
     // A little hacky - pick initial values from menu items
     modelMenu(0);
+    
     materialMenu(0);
+
     // bumpyMenu(0);
     // textureMenu(0);
     envMapMenu(0);

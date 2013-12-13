@@ -313,6 +313,8 @@ struct Object {
     GLSLProgram program;
     GLSLProgram rays;
     GLSLProgram lighting;
+    GLSLProgram explosion_program;
+    GLSLProgram temp_program;
     GLuint ColorBuffer, DepthBuffer, FBO;
 
 
@@ -326,6 +328,7 @@ struct Object {
 
     virtual void draw(const View& view, LightPtr light) = 0;
     virtual void loadProgram() = 0;
+    virtual void loadExplosionProgram() = 0;
 };
 typedef shared_ptr<Object> ObjectPtr;
 
@@ -354,6 +357,7 @@ private:
     std::vector<tinyobj::shape_t> shapes;
     bool outline;
     bool godsRay;
+    bool explosion;
     const std::string filename;
     const std::string folderpath;
 protected:
@@ -362,8 +366,10 @@ public:
 	ModelObject(std::string file_name, std::string folder_path, Transform t, MaterialPtr m);
 	~ModelObject();
     void loadProgram();
+    void loadExplosionProgram();
     void loadTexture();
     void setGodsRay();
+    void setExplosion(bool val);
     void setEdgeDetection();
     void loadGodsRay();
     void setOutline();

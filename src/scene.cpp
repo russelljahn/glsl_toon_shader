@@ -473,6 +473,9 @@ void ModelObject::setOutline(){
         outline = true;
     }
 }
+void ModelObject::setExplosion(bool val){
+    explosion = val;
+}
 void ModelObject::setGodsRay(){
     godsRay = false;
 }
@@ -535,7 +538,41 @@ void ModelObject::loadGodsRay(){
         }
     }
 }
+void ModelObject::loadExplosionProgram()
+{
+   VertexShader vs_explosion;
+    FragmentShader fs_explosion;
 
+    string vertex_f = "glsl/explosion.vert";
+    string frag_f = "glsl/explosion.frag";
+
+    bool vs_ok = vs_explosion.readTextFile(vertex_f.c_str());
+    bool fs_ok = fs_explosion.readTextFile(frag_f.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs_explosion.getShader(), fs_explosion.getShader());
+        vs_explosion.release();
+        fs_explosion.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            explosion_program.swap(new_program);
+            explosion_program.use();
+            explosion_program.setSampler("normalMap", 0);
+            explosion_program.setSampler("texture", 1);
+            explosion_program.setSampler("heightField", 2);
+            explosion_program.setSampler("envmap", 3);
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+
+}
 void ModelObject::loadProgram()
 {
     VertexShader vs;
@@ -579,6 +616,7 @@ ModelObject::ModelObject(std::string file_name, std::string folder_path, Transfo
 {
     std::cout << "Constructing '" << filename << "'" << std::endl;
     outline = false;
+    explosion =false;
     std::string err = tinyobj::LoadObj(shapes, (folderpath+filename).c_str(), folderpath.c_str());
     
 
@@ -594,8 +632,13 @@ ModelObject::ModelObject(std::string file_name, std::string folder_path, Transfo
     
     clockStartProgram = clock();
 
-    // loadTexture();
-    loadProgram();
+    loadTexture();
+    if(explosion){
+        loadExplosionProgram();
+    }
+    else{
+       loadProgram();
+    }
     
     material->bindTextures();
 }
@@ -652,7 +695,7 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
         //printf("HERER\n" );
         bool WireFrame = false;
-        bool blur = true;
+        bool blur = false;
 
 // generate textures ------------------------------------------------------------------------------------------------------
 
@@ -673,16 +716,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
 
         pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // 
-
-
-        if(WireFrame)
-        {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }
-        glEnable(GL_DEPTH_TEST);
-
         lighting.use();
 /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
@@ -692,17 +725,23 @@ void ModelObject::draw(const View& view, LightPtr light) {
         /* For every triangle face in the mesh... */
         for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
             
-            // float2 uvs;
+            float2 uvs;
             
             glBegin(GL_TRIANGLES);
             
             /* Vertex 0. */
             size_t vertexId = shapes[shapeId].mesh.indices[indexId];
-            // if (!shapes[shapeId].mesh.texcoords.empty()) {
-            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-            //     program.setVec2f("uvs", uvs);
-            // }
+            if (!shapes[shapeId].mesh.texcoords.empty()) {
+                uvs[0] = shapes[shapeId].mesh.texcoords[2*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[2*vertexId+1];
+                                if( uvs[1] >10000000000000000 or   uvs[1]  < -10000000000000000){
+                    uvs[1] =0;
+                }
+              if( uvs[0] >10000000000000000 or   uvs[0]  < -10000000000000000){
+                    uvs[0] =0;
+                }
+                glTexCoord2f(uvs[0],uvs[1]);
+            }
             if (shapes[shapeId].mesh.normals.size() > 0) {
                 glNormal3f(
                            shapes[shapeId].mesh.normals[3*vertexId],
@@ -719,11 +758,17 @@ void ModelObject::draw(const View& view, LightPtr light) {
             
             /* Vertex 1. */
             vertexId = shapes[shapeId].mesh.indices[indexId+1];
-            // if (!shapes[shapeId].mesh.texcoords.empty()) {
-            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-            //     program.setVec2f("uvs", uvs);
-            // }
+            if (!shapes[shapeId].mesh.texcoords.empty()) {
+                uvs[0] = shapes[shapeId].mesh.texcoords[2*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[2*vertexId+1];
+                                if( uvs[1] >10000000000000000 or   uvs[1]  < -10000000000000000){
+                    uvs[1] =0;
+                }
+              if( uvs[0] >10000000000000000 or   uvs[0]  < -10000000000000000){
+                    uvs[0] =0;
+                }
+                glTexCoord2f(uvs[0],uvs[1]);
+            }
             if (shapes[shapeId].mesh.normals.size() > 0) {
                 glNormal3f(
                            shapes[shapeId].mesh.normals[3*vertexId],
@@ -740,11 +785,17 @@ void ModelObject::draw(const View& view, LightPtr light) {
             
             /* Vertex 2. */
             vertexId = shapes[shapeId].mesh.indices[indexId+2];
-            // if (!shapes[shapeId].mesh.texcoords.empty()) {
-            //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-            //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-            //     program.setVec2f("uvs", uvs);
-            // }
+            if (!shapes[shapeId].mesh.texcoords.empty()) {
+                uvs[0] = shapes[shapeId].mesh.texcoords[2*vertexId];
+                uvs[1] = shapes[shapeId].mesh.texcoords[2*vertexId+1];
+                                if( uvs[1] >10000000000000000 or   uvs[1]  < -10000000000000000){
+                    uvs[1] =0;
+                }
+              if( uvs[0] >10000000000000000 or   uvs[0]  < -10000000000000000){
+                    uvs[0] =0;
+                }
+                glTexCoord2f(uvs[0],uvs[1]);
+            }
             if (shapes[shapeId].mesh.normals.size() > 0) {
                 glNormal3f(
                            shapes[shapeId].mesh.normals[3*vertexId],
@@ -765,14 +816,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
 
         glUseProgram(0);
-
-        if(WireFrame)
-        {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-        
-
-        glDisable(GL_DEPTH_TEST);
 
     if(blur)
     {
@@ -799,45 +842,57 @@ void ModelObject::draw(const View& view, LightPtr light) {
     }
 
     else{
-    program.use();
+
+
     float4 eye_position_object_space = mul(transform.getInverseMatrix(), float4(view.eye_position,1));
     eye_position_object_space.xyz /= eye_position_object_space.w;
-    program.setVec3f("eyePosition", eye_position_object_space.xyz);
     
     float4 light_position_object_space = mul(transform.getInverseMatrix(), light->getPosition());
     light_position_object_space.xyz /= light_position_object_space.w;
-    program.setVec3f("lightPosition", light_position_object_space.xyz);
-    
     // LM = Light color modulated by Matrial color
     // a,d,s = ambient, diffuse, specular
     float4 LMa = material->ambient*light->getColor();
-    program.setVec4f("LMa", LMa);
     float4 LMd = material->diffuse*light->getColor();
-    program.setVec4f("LMd", LMd);
     float4 LMs = material->specular*light->getColor();
+    if(explosion){
+        glUseProgram(0);
+        explosion_program.use();
+        explosion_program.setVec3f("eyePosition", eye_position_object_space.xyz);
+        explosion_program.setVec3f("lightPosition", light_position_object_space.xyz);
+        explosion_program.setVec4f("LMa", LMa);
+        explosion_program.setVec4f("LMd", LMd);
+        explosion_program.setVec4f("LMs", LMs);
+        explosion_program.setVec1f("shininess", material->shininess);
+        
+        explosion_program.setMat3f("objectToWorld", transform);
+        // Send current frame time and previous frame time to gfx card.
+        explosion_program.setVec1f("timePreviousFrame", timePreviousFrame );
+        explosion_program.setVec1f("timeCurrentFrame", timeCurrentFrame );
+    }
+    else{
+    glUseProgram(0);
+    program.use();        
+    program.setVec3f("eyePosition", eye_position_object_space.xyz);
+    program.setVec3f("lightPosition", light_position_object_space.xyz);
+    program.setVec4f("LMa", LMa);
+    program.setVec4f("LMd", LMd);
     program.setVec4f("LMs", LMs);
     program.setVec1f("shininess", material->shininess);
     
     program.setMat3f("objectToWorld", transform);
-
-
     // Send current frame time and previous frame time to gfx card.
     program.setVec1f("timePreviousFrame", timePreviousFrame );
     program.setVec1f("timeCurrentFrame", timeCurrentFrame );
-
+    }
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());
     if(!outline){
     /* For every shape... */
     for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
-        
         // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
-        
         /* For every triangle face in the mesh... */
         for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
-            
         float2 uvs = float2(1.0,1.0);
-
             glBegin(GL_TRIANGLES);
             /* Vertex 0. */
             size_t vertexId = shapes[shapeId].mesh.indices[indexId];
@@ -913,13 +968,11 @@ void ModelObject::draw(const View& view, LightPtr light) {
                            shapes[shapeId].mesh.normals[3*vertexId+2]
                            );
             }
-
             glVertex3f(
                        shapes[shapeId].mesh.positions[3*vertexId],
                        shapes[shapeId].mesh.positions[3*vertexId+1],
                        shapes[shapeId].mesh.positions[3*vertexId+2]
                        );
-            
             glEnd();
         }
     }
@@ -929,42 +982,22 @@ void ModelObject::draw(const View& view, LightPtr light) {
         float       outlineColor[3] = { 255.0f, 255.0f, 255.0f };
 
         glEnable (GL_BLEND);                // Enable Blending
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // Set The Blend Mode
         glBlendFunc (GL_SRC_ALPHA ,GL_ONE_MINUS_SRC_ALPHA);
-        
         glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);       // Draw Backfacing Polygons As Wireframes
         glLineWidth (0.3);         // Set The Line Width
-        
         glCullFace (GL_FRONT);              // Don't Draw Any Front-Facing Polygons
-        
         glDepthFunc (GL_LEQUAL);            // Change The Depth Mode
-        
         glColor3fv (&outlineColor[0]);          // Set The Outline Color
         
-        
-            
-            
+
             /* For every shape... */
             for (size_t shapeId = 0; shapeId < shapes.size(); ++shapeId) {
-                
-                // assert((shapes[shapeId].mesh.indices.size() % 3) == 0);
-                
                 /* For every triangle face in the mesh... */
                 for (size_t indexId = 0; indexId < shapes[shapeId].mesh.indices.size(); indexId+=3) {
-                    
-                    // float2 uvs;
-                    
                     glBegin(GL_TRIANGLES);
                     
                     /* Vertex 0. */
                     size_t vertexId = shapes[shapeId].mesh.indices[indexId];
-                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    //     program.setVec2f("uvs", uvs);
-                    // }
-                    
                     glVertex3f(
                                shapes[shapeId].mesh.positions[3*vertexId],
                                shapes[shapeId].mesh.positions[3*vertexId+1],
@@ -973,12 +1006,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     
                     /* Vertex 1. */
                     vertexId = shapes[shapeId].mesh.indices[indexId+1];
-                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    //     program.setVec2f("uvs", uvs);
-                    // }
-                    
                     glVertex3f(
                                shapes[shapeId].mesh.positions[3*vertexId],
                                shapes[shapeId].mesh.positions[3*vertexId+1],
@@ -987,12 +1014,6 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     
                     /* Vertex 2. */
                     vertexId = shapes[shapeId].mesh.indices[indexId+2];
-                    // if (!shapes[shapeId].mesh.texcoords.empty()) {
-                    //     uvs[0] = shapes[shapeId].mesh.texcoords[3*vertexId];
-                    //     uvs[1] = shapes[shapeId].mesh.texcoords[3*vertexId+1];
-                    //     program.setVec2f("uvs", uvs);
-                    // }
-                    
                     glVertex3f(
                                shapes[shapeId].mesh.positions[3*vertexId], 
                                shapes[shapeId].mesh.positions[3*vertexId+1], 
@@ -1002,14 +1023,10 @@ void ModelObject::draw(const View& view, LightPtr light) {
                     glEnd();
                 }
             }
-        
 		glDepthFunc (GL_LESS);									// Reset The Depth-Testing Mode ( NEW )
-        
 		glCullFace (GL_FRONT);									// Reset The Face To Be Culled ( NEW )
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);						// Reset Back-Facing Polygon Drawing Mode ( NEW )
 		glDisable (GL_BLEND);
-        
-
     }
    glPopMatrix();
 
@@ -1019,8 +1036,8 @@ void ModelObject::draw(const View& view, LightPtr light) {
 
 void ModelObject::loadTexture() {
 
-    const std::string filename = shapes[0].material.diffuse_texname;
-    // const std::string filename = "tga/brick_texture.tga"; // Should work, but doesn't.
+     const std::string filename = folderpath+shapes[0].material.diffuse_texname;
+     //const std::string filename = "tga/capsule0.png"; // Should work, but doesn't.
 
     std::cout << "Loading image at: " << filename << std::endl;
 
