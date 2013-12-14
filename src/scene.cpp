@@ -476,6 +476,10 @@ void ModelObject::setOutline(){
 void ModelObject::setExplosion(bool val){
     explosion = val;
 }
+void ModelObject::setExplosion2(bool val){
+    explosion2 = val;
+}
+
 void ModelObject::setGodsRay(){
     godsRay = false;
 }
@@ -573,6 +577,80 @@ void ModelObject::loadExplosionProgram()
     }
 
 }
+
+void ModelObject::loadExplosion2Program()
+{
+   VertexShader vs_explosion;
+    FragmentShader fs_explosion;
+
+    string vertex_f = "glsl/explosion2.vert";
+    string frag_f = fragment_filename;
+
+    bool vs_ok = vs_explosion.readTextFile(vertex_f.c_str());
+    bool fs_ok = fs_explosion.readTextFile(frag_f.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs_explosion.getShader(), fs_explosion.getShader());
+        vs_explosion.release();
+        fs_explosion.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            explosion2_program.swap(new_program);
+            explosion2_program.use();
+            explosion2_program.setSampler("normalMap", 0);
+            explosion2_program.setSampler("texture", 1);
+            explosion2_program.setSampler("heightField", 2);
+            explosion2_program.setSampler("envmap", 3);
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+
+}
+void ModelObject::setRandom(bool val){
+    random = val;
+}
+void ModelObject::loadRandomProgram()
+{
+   VertexShader vs_explosion;
+    FragmentShader fs_explosion;
+
+    string vertex_f = "glsl/random.vert";
+    string frag_f = fragment_filename;
+
+    bool vs_ok = vs_explosion.readTextFile(vertex_f.c_str());
+    bool fs_ok = fs_explosion.readTextFile(frag_f.c_str());
+    if (vs_ok && fs_ok) {
+        GLSLProgram new_program(vs_explosion.getShader(), fs_explosion.getShader());
+        vs_explosion.release();
+        fs_explosion.release();
+        bool ok = new_program.validate();
+        if (ok) {
+            explosion2_program.swap(new_program);
+            explosion2_program.use();
+            explosion2_program.setSampler("normalMap", 0);
+            explosion2_program.setSampler("texture", 1);
+            explosion2_program.setSampler("heightField", 2);
+            explosion2_program.setSampler("envmap", 3);
+        } else {
+            printf("GLSL shader compilation failed\n");
+        }
+    } else {
+        if (!vs_ok) {
+            printf("Vertex shader failed to load\n");
+        }
+        if (!fs_ok) {
+            printf("Fragment shader failed to load\n");
+        }
+    }
+
+}
 void ModelObject::loadProgram()
 {
     VertexShader vs;
@@ -617,6 +695,8 @@ ModelObject::ModelObject(std::string file_name, std::string folder_path, Transfo
     std::cout << "Constructing '" << filename << "'" << std::endl;
     outline = false;
     explosion =false;
+    random = false;
+    explosion2 = false;
     std::string err = tinyobj::LoadObj(shapes, (folderpath+filename).c_str(), folderpath.c_str());
     
 
@@ -635,6 +715,12 @@ ModelObject::ModelObject(std::string file_name, std::string folder_path, Transfo
     loadTexture();
     if(explosion){
         loadExplosionProgram();
+    }
+    else if(explosion2){
+        loadExplosion2Program();
+    }
+    else if(random){
+        loadRandomProgram();
     }
     else{
        loadProgram();
@@ -869,20 +955,50 @@ void ModelObject::draw(const View& view, LightPtr light) {
         explosion_program.setVec1f("timePreviousFrame", timePreviousFrame );
         explosion_program.setVec1f("timeCurrentFrame", timeCurrentFrame );
     }
+    else if(explosion2){
+        glUseProgram(0);
+        explosion2_program.use();
+        explosion2_program.setVec3f("eyePosition", eye_position_object_space.xyz);
+        explosion2_program.setVec3f("lightPosition", light_position_object_space.xyz);
+        explosion2_program.setVec4f("LMa", LMa);
+        explosion2_program.setVec4f("LMd", LMd);
+        explosion2_program.setVec4f("LMs", LMs);
+        explosion2_program.setVec1f("shininess", material->shininess);
+        
+        explosion2_program.setMat3f("objectToWorld", transform);
+        // Send current frame time and previous frame time to gfx card.
+        explosion2_program.setVec1f("timePreviousFrame", timePreviousFrame );
+        explosion2_program.setVec1f("timeCurrentFrame", timeCurrentFrame );  
+    }
+    else if(random){
+        glUseProgram(0);
+        random_program.use();
+        random_program.setVec3f("eyePosition", eye_position_object_space.xyz);
+        random_program.setVec3f("lightPosition", light_position_object_space.xyz);
+        random_program.setVec4f("LMa", LMa);
+        random_program.setVec4f("LMd", LMd);
+        random_program.setVec4f("LMs", LMs);
+        random_program.setVec1f("shininess", material->shininess);
+        
+        random_program.setMat3f("objectToWorld", transform);
+        // Send current frame time and previous frame time to gfx card.
+        random_program.setVec1f("timePreviousFrame", timePreviousFrame );
+        random_program.setVec1f("timeCurrentFrame", timeCurrentFrame );  
+    }
     else{
-    glUseProgram(0);
-    program.use();        
-    program.setVec3f("eyePosition", eye_position_object_space.xyz);
-    program.setVec3f("lightPosition", light_position_object_space.xyz);
-    program.setVec4f("LMa", LMa);
-    program.setVec4f("LMd", LMd);
-    program.setVec4f("LMs", LMs);
-    program.setVec1f("shininess", material->shininess);
-    
-    program.setMat3f("objectToWorld", transform);
-    // Send current frame time and previous frame time to gfx card.
-    program.setVec1f("timePreviousFrame", timePreviousFrame );
-    program.setVec1f("timeCurrentFrame", timeCurrentFrame );
+        glUseProgram(0);
+        program.use();        
+        program.setVec3f("eyePosition", eye_position_object_space.xyz);
+        program.setVec3f("lightPosition", light_position_object_space.xyz);
+        program.setVec4f("LMa", LMa);
+        program.setVec4f("LMd", LMd);
+        program.setVec4f("LMs", LMs);
+        program.setVec1f("shininess", material->shininess);
+        
+        program.setMat3f("objectToWorld", transform);
+        // Send current frame time and previous frame time to gfx card.
+        program.setVec1f("timePreviousFrame", timePreviousFrame );
+        program.setVec1f("timeCurrentFrame", timeCurrentFrame );
     }
     
     pushAndMultGLMatrix(GL_MODELVIEW, transform.getMatrix());

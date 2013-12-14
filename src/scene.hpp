@@ -314,6 +314,10 @@ struct Object {
     GLSLProgram rays;
     GLSLProgram lighting;
     GLSLProgram explosion_program;
+    GLSLProgram explosion2_program;
+    GLSLProgram random_program;
+
+
     GLSLProgram temp_program;
     GLuint ColorBuffer, DepthBuffer, FBO;
 
@@ -358,6 +362,8 @@ private:
     bool outline;
     bool godsRay;
     bool explosion;
+    bool explosion2;
+    bool random;
     const std::string filename;
     const std::string folderpath;
 protected:
@@ -367,9 +373,15 @@ public:
 	~ModelObject();
     void loadProgram();
     void loadExplosionProgram();
+    void loadExplosion2Program();
+    void loadRandomProgram();
     void loadTexture();
     void setGodsRay();
     void setExplosion(bool val);
+    void setExplosion2(bool val);
+    void setRandom(bool val);
+    bool getRandom(){return random;};
+    bool getExplosion2(){return explosion2;};
     void setEdgeDetection();
     void loadGodsRay();
     void setOutline();

@@ -26,5 +26,7 @@ void main() {
 	float specular = pow(amountLightToEye, shininess);
 	vec4 tex = texture2D(texture, gl_TexCoord[0].st);
 
+	vec4 reflection = reflect(lightDirection, normal);
+
 	gl_FragColor = clamp(LMa + LMd*diffuse + specular*LMs + tex, 0.0, 1.0);
 }

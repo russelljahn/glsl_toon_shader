@@ -20,7 +20,6 @@ static const struct {
     const char *pathToFolder; // From media folder
     const char *filename;
 } model_list[] = {
-    // { "Cubey",       "cube/",          "cube.obj" },
     { "Dragon",      "dragon_smooth/", "dragon_smooth.obj" },
     { "Statue",      "statue/",        "statue.obj" },
     { "Mario",       "mario/",         "mario.obj" },
@@ -29,9 +28,10 @@ static const struct {
     { "Skull",       "skull/",         "skull.obj" },
     { "Shark",       "shark/",         "shark.obj" },
     // { "Buddha",      "buddha/",        "buddha.obj" }, // Maybe add back in if model loading gets WAYYYY faster.
-    {"Capsule",       "capsule/",          "capsule.obj"},
+    { "Capsule",       "capsule/",      "capsule.obj"},
     { "Monkey",      "monkey/",        "monkey.obj" },
     { "Bunny",       "bunny/",         "bunny.obj" },
+    { "Cubey",       "cube/",          "cube.obj" },
 };
 
 void modelMenu(int item)
@@ -232,12 +232,12 @@ static const struct {
     { "Graphic",                 "glsl/graphic.frag" },
     { "Psychadelic",             "glsl/psychadelic.frag" },
     { "Stencilize",              "glsl/stencilize.frag" },
-    { "God Ray",                 "glsl/gods_ray.frag"},
+    // { "God Ray",                 "glsl/gods_ray.frag"},
     { "Ice",                     "glsl/ice.frag" },
     { "Noise Texture",           "glsl/noise_texture.frag" },
     { "Gritty Texture",          "glsl/gritty_texture.frag" },  
     { "High Contrast Static",    "glsl/high_contrast_static.frag" }, 
-    { "Texture",        "glsl/texture.frag"}
+    // { "Watercolor",                 "glsl/watercolor.frag"}
 
 };
 
@@ -248,13 +248,19 @@ void shaderMenu(int item)
     const char *filename = shader_list[item].filename;
     printf("Switching to shader \"%s\", loaded from %s...\n", shader_list[item].name, filename);
     scene->models->setGodsRay();
-    scene->models->setExplosion(false);
+    //scene->models->setExplosion(false);
     if(strcmp(shader_list[item].name,"God Ray")==0){
         scene->models->loadGodsRay();
     }
     else{
         scene->models->fragment_filename = filename;
-        scene->models->loadProgram();
+        if(scene->models->getExplosion2()){
+            scene->models->loadExplosion2Program();
+        }
+        else if(scene->models->getRandom())
+            scene->models->loadRandomProgram();
+        else
+            scene->models->loadProgram();
     }
     material->bindTextures();
     glutPostRedisplay();
@@ -263,8 +269,10 @@ static const struct {
     const char *name;
     const char *action;
 } extra_list[] = {
-    { "Toggle Wireframe",   "outline" },
-    {"Black Hole", "Black Hole"}
+    {"Toggle Wireframe",   "outline"},
+    {"Black Hole", "Black Hole"},
+    {"Simplex Noise Explosion","Explosion"},
+    {"Random Noise Explosion","Random"}
 };
 
 
@@ -284,6 +292,14 @@ void extraMenu(int item)
     else if(item == 1){
         scene->models->setExplosion(true);
         scene->models->loadExplosionProgram();
+    }
+    else if(item == 2){
+        scene->models->setExplosion2(true);
+        scene->models->loadExplosion2Program();
+    }
+    else if(item == 3){
+        scene->models->setRandom(true);
+        scene->models->loadRandomProgram();
     }
     glutPostRedisplay();
 }
